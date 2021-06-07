@@ -42,6 +42,7 @@ class kg_construction():
 
         self.index_covid = np.where(self.covid_ar[:,7]=='DETECTED')[0]
         self.mrn_covid = np.unique(self.covid_ar[self.index_covid,:][:,0])
+        self.death_count = 0
         for i in self.mrn_covid:
             index_reg = np.where(i==self.reg_ar[:,0])[0][0]
             self.check =index_reg
@@ -58,10 +59,15 @@ class kg_construction():
             if death_flag == 1:
                 if np.isnan(death_time):
                     continue
+            admit_date = self.reg_ar[index_reg,3]
             if i not in self.dic_patient.keys():
                 self.dic_patient[i] = {}
                 self.dic_patient[i]['death_flag'] = death_flag
                 self.dic_patient[i]['death_time'] = death_time
+                self.dic_patient[i]['admit_date'] = admit_date
+
+            if death_flag == 1:
+                self.death_count += 1
 
 
 
