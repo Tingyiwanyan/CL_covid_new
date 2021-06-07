@@ -41,7 +41,7 @@ class kg_construction():
                               'CAC - RESPIRATIONS', 'CAC - PULSE', 'CAC - HEIGHT', 'CAC - WEIGHT/SCALE']
 
         self.index_covid = np.where(self.covid_ar[:,7]=='DETECTED')[0]
-        self.mrn_covid = np.unique(self.covid_ar[index,:][:,0])
+        self.mrn_covid = np.unique(self.covid_ar[self.index_covid,:][:,0])
 
 
 if __name__ == "__main__":
