@@ -43,7 +43,7 @@ class kg_construction():
         self.index_covid = np.where(self.covid_ar[:,7]=='DETECTED')[0]
         self.mrn_covid = np.unique(self.covid_ar[self.index_covid,:][:,0])
         for i in self.mrn_covid:
-            index_reg = np.where(i=self.reg_ar[:,0])[0][0]
+            index_reg = np.where(i==self.reg_ar[:,0])[0][0]
             self.check =index_reg
             if self.reg_ar[index_reg,16] == '20' or self.reg_ar[index_reg,16] == 'EXP':
                 print("found 20")
