@@ -7,13 +7,12 @@ import json
 
 
 def __init__(self):
-    file_path = '/datadrive/tingyi_wanyan/user_tingyi.wanyan/tensorflow_venv/registry_2020-06-29'
+    file_path = '/datadrive/tingyi_wanyan/Registry_2020-10-15'
     self.reg = file_path + '/registry.csv'
     self.covid_lab = file_path + '/covid19LabTest.csv'
     self.lab = file_path + '/Lab.csv'
     self.vital = file_path + '/vitals.csv'
-    file_path_ = '/home/tingyi.wanyan'
-    self.lab_comb = 'lab_mapping_comb.csv'
+    self.lab_comb = '/datadrive/tingyi_wanyan/lab_mapping_comb.csv'
     self.file_path_comorbidity = '/home/tingyi.wanyan/comorbidity_matrix_20200710.csv'
 
 
@@ -40,3 +39,6 @@ def create_kg_dic(self):
     self.dic_race = {}
     self.crucial_vital = ['CAC - BLOOD PRESSURE', 'CAC - TEMPERATURE', 'CAC - PULSE OXIMETRY',
                           'CAC - RESPIRATIONS', 'CAC - PULSE', 'CAC - HEIGHT', 'CAC - WEIGHT/SCALE']
+
+    self.index_covid = np.where(self.covid_ar[:,7]=='DETECTED')[0]
+    self.mrn_covid = np.unique(self.covid_ar[index,:][:,0])
