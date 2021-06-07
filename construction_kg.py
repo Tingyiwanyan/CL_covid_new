@@ -44,11 +44,12 @@ class kg_construction():
         self.mrn_covid = np.unique(self.covid_ar[self.index_covid,:][:,0])
         for i in self.mrn_covid:
             index_reg = np.where(i=self.reg_ar[:,0])[0][0]
+            self.check =index_reg
             if self.reg_ar[index_reg,16] == '20' or self.reg_ar[index_reg,16] == 'EXP':
                 print("found 20")
                 death_flag = 1
                 death_time = self.reg_ar[index_reg,15]
-            if not np.isnan(self.reg_ar[index_reg,14]):
+            elif not np.isnan(self.reg_ar[index_reg,14]):
                 death_flag = 1
                 death_time = self.reg_ar[index_reg,14]
             else:
