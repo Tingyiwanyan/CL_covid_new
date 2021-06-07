@@ -59,6 +59,7 @@ class kg_construction():
                 if np.isnan(death_time):
                     continue
             if i not in self.dic_patient.keys():
+                self.dic_patient[i] = {}
                 self.dic_patient[i]['death_flag'] = death_flag
                 self.dic_patient[i]['death_time'] = death_time
 
