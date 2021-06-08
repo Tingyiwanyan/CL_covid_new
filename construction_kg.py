@@ -38,6 +38,8 @@ class kg_construction():
         self.dic_lab_category = {}
         self.dic_demographic = {}
         self.dic_race = {}
+        self.death_neighbor = []
+        self.live_neighbor = []
         self.crucial_vital = ['CAC - BLOOD PRESSURE', 'CAC - TEMPERATURE', 'CAC - PULSE OXIMETRY',
                               'CAC - RESPIRATIONS', 'CAC - PULSE', 'CAC - HEIGHT', 'CAC - WEIGHT/SCALE']
         self.cricial_lab = ['ALBUMIN', 'ALKPHOS', 'ALT', 'AMYLASE', 'AGAP', 'PTT', 'AST', \
@@ -88,15 +90,20 @@ class kg_construction():
             elif not np.isnan(self.reg_ar[index_reg,14]):
                 death_flag = 1
                 death_time = self.reg_ar[index_reg,14]
+
             else:
                 death_flag = 0
                 self.discharge_time = self.reg_ar[index_reg,15]
                 if np.isnan(self.discharge_time):
                     continue
                 death_time = self.discharge_time
+
+            if np.isnan(death_time):
+                continue
             if death_flag == 1:
-                if np.isnan(death_time):
-                    continue
+                self.death_neighbor.append(i)
+            else:
+                self.live_neighbor.append(i)
             if not death_time == 0:
                 death_time = datetime.datetime.fromtimestamp(death_time/1000).strftime('%Y-%m-%d %H:%M:%S')
                 self.in_time = death_time.split(' ')
