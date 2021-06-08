@@ -51,11 +51,11 @@ class kg_construction():
                 print("found 20")
                 death_flag = 1
                 death_time = self.reg_ar[index_reg,15]
-                death_time = datetime.datetime.fromtimestamp(death_time).strftime('%Y-%m-%d %H:%M:%S')
+                death_time = datetime.datetime.fromtimestamp(death_time/1000).strftime('%Y-%m-%d %H:%M:%S')
             elif not np.isnan(self.reg_ar[index_reg,14]):
                 death_flag = 1
                 death_time = self.reg_ar[index_reg,14]
-                death_time = datetime.datetime.fromtimestamp(death_time).strftime('%Y-%m-%d %H:%M:%S')
+                death_time = datetime.datetime.fromtimestamp(death_time/1000).strftime('%Y-%m-%d %H:%M:%S')
             else:
                 death_flag = 0
                 death_time = 0
@@ -65,7 +65,7 @@ class kg_construction():
 
             admit_date = self.reg_ar[index_reg,3]
             self.check_date = admit_date
-            admit_date = datetime.datetime.fromtimestamp(admit_date).strftime('%Y-%m-%d %H:%M:%S')
+            admit_date = datetime.datetime.fromtimestamp(admit_date/1000).strftime('%Y-%m-%d %H:%M:%S')
             if i not in self.dic_patient.keys():
                 self.dic_patient[i] = {}
                 self.dic_patient[i]['death_flag'] = death_flag
