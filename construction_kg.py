@@ -79,7 +79,7 @@ class kg_construction():
         for i in self.mrn_covid:
             index_reg = np.where(i==self.reg_ar[:,0])[0][0]
             index_vital = np.where(i==self.vital_sign_ar[:,0])[0]
-            index_lab = np.where(i==self.lab_ar[:,0])[0]
+            index_lab = np.where(i==self.labtest_ar[:,0])[0]
             self.check =index_reg
             if self.reg_ar[index_reg,16] == '20' or self.reg_ar[index_reg,16] == 'EXP':
                 print("found 20")
