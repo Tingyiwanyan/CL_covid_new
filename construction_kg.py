@@ -140,9 +140,9 @@ class kg_construction():
                 difference_day = self.in_date_death[2]-self.in_date_admit[2]
                 difference_hour = self.in_time_death[0]-self.in_time_admit[0]
 
-                death_month = difference_month * 30 * 4
-                death_day = difference_day * 4
-                death_hour = np.int(np.floor(difference_hour / 6))
+                death_month = difference_month * 30 * 6
+                death_day = difference_day * 6
+                death_hour = np.int(np.floor(difference_hour / 4))
 
                 death_time = death_month + death_day + death_hour
 
@@ -204,9 +204,9 @@ class kg_construction():
                     difference_day = date_day_value_lab - self.in_date_admit[2]
                     difference_hour = date_hour_value_lab - self.in_time_admit[0]
 
-                    death_month = difference_month * 30 * 4
-                    death_day = difference_day * 4
-                    death_hour = np.int(np.floor(difference_hour / 6))
+                    death_month = difference_month * 30 * 6
+                    death_day = difference_day * 6
+                    death_hour = np.int(np.floor(difference_hour / 4))
 
                     self.prior_time = death_month + death_day + death_hour
 
