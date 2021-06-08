@@ -60,7 +60,8 @@ class kg_construction():
             if death_flag == 1:
                 if np.isnan(death_time):
                     continue
-            death_time = datetime.datetime.fromtimestamp(death_time / 1000).strftime('%Y-%m-%d %H:%M:%S')
+            if not death_time == 0:
+                death_time = datetime.datetime.fromtimestamp(death_time / 1000).strftime('%Y-%m-%d %H:%M:%S')
             admit_date = self.reg_ar[index_reg,3]
             self.check_date = admit_date
             admit_date = datetime.datetime.fromtimestamp(admit_date/1000).strftime('%Y-%m-%d %H:%M:%S')
