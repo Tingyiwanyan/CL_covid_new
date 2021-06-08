@@ -121,6 +121,7 @@ class kg_construction():
             if i not in self.dic_patient.keys():
                 self.dic_patient[i] = {}
                 self.dic_patient[i]['prior_time_lab'] = {}
+                self.dic_patient[i]['prior_time_vital'] = {}
                 self.dic_patient[i]['death_flag'] = death_flag
                 self.dic_patient[i]['death_time'] = death_time
                 self.dic_patient[i]['admit_date'] = admit_date
@@ -135,8 +136,8 @@ class kg_construction():
             self.in_time_admit = [np.int(i) for i in self.in_time_admit[1].split(':')[0:-1]]
 
             if not death_flag == 0:
-                difference_month = self.in_date_death[1]-self.in_date_admit[0]
-                difference_day = self.in_date_death[2]-self.in_date_admit[1]
+                difference_month = self.in_date_death[1]-self.in_date_admit[1]
+                difference_day = self.in_date_death[2]-self.in_date_admit[2]
                 difference_hour = self.in_time_death[0]-self.in_time_admit[0]
 
                 death_month = difference_month * 30 * 4
@@ -146,12 +147,11 @@ class kg_construction():
                 death_time = death_month + death_day + death_hour
 
                 self.dic_patient[i]['death_hour'] = death_time
-
+            """
             for k in index_lab:
                 obv_id = self.labtest_ar[k][2]
                 value = self.labtest_ar[k][3]
                 self.check_data_lab = self.labtest_ar[k][4]
-                date_year_value_lab = float(str(self.labtest_ar[k][4])[0:4])
                 #date_day_value_lab = float(str(self.check_data_lab)[4:6])*30+float(str(self.check_data_lab)[6:8])
                 date_month_value_lab = float(str(self.check_data_lab)[4:6])
                 date_day_value_lab = float(str(self.check_data_lab)[6:8])
@@ -176,12 +176,12 @@ class kg_construction():
                         continue
                     if self.prior_time > self.death_hour:
                         continue
-                    try:
-                        value = float(value)
-                    except:
-                        continue
-                    if not value == value:
-                        continue
+                    #try:
+                       # value = float(value)
+                    #except:
+                        #continue
+                    #if not value == value:
+                        #continue
 
                     self.dic_lab[obv_id].setdefault('lab_value_patient',[]).append(value)
                     if self.prior_time not in self.dic_patient[i]['prior_time_lab']:
@@ -189,7 +189,7 @@ class kg_construction():
                         self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(obv_id,[]).append(value)
                     else:
                         self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(obv_id,[]).append(value)
-
+            
             for j in index_vital:
                 obv_id = self.vital_sign_ar[j][2]
                 if obv_id in self.crucial_vital:
@@ -209,8 +209,8 @@ class kg_construction():
 
                     self.prior_time = death_month + death_day + death_hour
 
-                    if self.prior_time < 0:
-                        continue
+                    #if self.prior_time < 0:
+                        #continue
                     if self.prior_time > self.death_hour:
                         continue
                     if obv_id == 'CAC - BLOOD PRESSURE':
@@ -256,7 +256,7 @@ class kg_construction():
 
             index_count += 1
 
-
+            """
 
 
 
