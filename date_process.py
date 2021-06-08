@@ -41,3 +41,5 @@ class read_data_covid():
             kg.dic_vital[i]['mean_value'] = mean
             kg.dic_vital[i]['std'] = std
 
+if __name__ == "__main__":
+    read_d = read_data_covid()

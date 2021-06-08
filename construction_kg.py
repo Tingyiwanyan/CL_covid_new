@@ -5,7 +5,6 @@ import time
 import pandas as pd
 import json
 import datetime
-from date_pross import read_data_covid
 
 class kg_construction():
     def __init__(self):
@@ -271,4 +270,4 @@ if __name__ == "__main__":
     #kg = kg_construction()
     #kg.read_csv()
     #kg.create_kg_dic()
-    read_d = read_data_covid()
+    #read_d = read_data_covid()
