@@ -134,7 +134,7 @@ class kg_construction():
             self.in_date_admit = [np.int(i) for i in self.in_time_admit[0].split('-')]
             self.in_time_admit = [np.int(i) for i in self.in_time_admit[1].split(':')[0:-1]]
 
-            if not self.death_value == 0:
+            if not death_flag == 0:
                 difference_month = self.in_date_death[1]-self.in_date_admit[0]
                 difference_day = self.in_date_death[2]-self.in_date_admit[1]
                 difference_hour = self.in_time_death[0]-self.in_time_admit[0]
