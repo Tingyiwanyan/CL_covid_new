@@ -58,7 +58,7 @@ class kg_construction():
         self.mrn_covid = np.unique(self.covid_ar[self.index_covid,:][:,0])
         self.death_count = 0
         index_lab = 0
-        for i in self.cricial_lab:
+        for i in self.crucial_lab:
             self.dic_lab[i] = {}
             self.dic_lab[i]['index'] = index_lab
             index_lab += 1
