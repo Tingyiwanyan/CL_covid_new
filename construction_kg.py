@@ -242,19 +242,17 @@ class kg_construction():
                         self.check_value = self.vital_sign_ar[j][3]
                         self.check_obv = obv_id
                         self.check_ar = self.vital_sign_ar[j]
-                        #if self.check_value == '""':
-                            #continue
-                        value = float(self.vital_sign_ar[j][3])
-                        #if np.isnan(value):
-                            #continue
-                        if self.prior_time not in self.dic_patient[i]['prior_time_vital']:
-                            self.dic_patient[i]['prior_time_vital'][self.prior_time] = {}
-                            self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault(obv_id, []).append(
-                                value)
-                        else:
-                            self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault(obv_id, []).append(
-                                value)
-                        self.dic_vital[obv_id].setdefault('value', []).append(value)
+                        if not self.check_value == '""':
+                            value = float(self.vital_sign_ar[j][3])
+                            if not np.isnan(value):
+                                if self.prior_time not in self.dic_patient[i]['prior_time_vital']:
+                                    self.dic_patient[i]['prior_time_vital'][self.prior_time] = {}
+                                    self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault(obv_id, []).append(
+                                        value)
+                                else:
+                                    self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault(obv_id, []).append(
+                                        value)
+                                self.dic_vital[obv_id].setdefault('value', []).append(value)
 
             index_count += 1
 
