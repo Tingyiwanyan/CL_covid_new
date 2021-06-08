@@ -27,19 +27,20 @@ class read_data_covid():
         self.lab_length = len(list(self.dic_lab.keys()))
 
         self.predict_window = 3
-
-        for i in kg.dic_lab.keys():
+        """
+        for i in self.dic_lab.keys():
             mean_lab = np.mean(kg.dic_lab[i]['lab_value_patient'])
             std_lab = np.mean(kg.dic_lab[i]['lab_value_patient'])
             kg.dic_lab[i]['mean_value'] = mean_lab
             kg.dic_lab[i]['std'] = std_lab
 
-        for i in kg.dic_vital.keys():
+        for i in self.dic_vital.keys():
             values = [np.float(j) for j in kg.dic_vital[i]['value']]
             mean = np.mean(values)
             std = np.std(values)
             kg.dic_vital[i]['mean_value'] = mean
             kg.dic_vital[i]['std'] = std
+        """
 
 if __name__ == "__main__":
     read_d = read_data_covid()
