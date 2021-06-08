@@ -180,7 +180,7 @@ class kg_construction():
                     #self.prior_time = np.int(np.floor(np.float((self.total_time_value_lab-self.admit_value)/(60*6))))
                     if self.prior_time < 0:
                         continue
-                    if self.prior_time > self.death_hour:
+                    if self.prior_time > death_time:
                         continue
                     #try:
                        # value = float(value)
