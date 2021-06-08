@@ -121,6 +121,7 @@ class kg_construction():
             admit_date = datetime.datetime.fromtimestamp(admit_date/1000).strftime('%Y-%m-%d %H:%M:%S')
             if i not in self.dic_patient.keys():
                 self.dic_patient[i] = {}
+                self.dic_patient[i]['prior_time_lab'] = {}
                 self.dic_patient[i]['death_flag'] = death_flag
                 self.dic_patient[i]['death_time'] = death_time
                 self.dic_patient[i]['admit_date'] = admit_date
