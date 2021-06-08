@@ -135,17 +135,18 @@ class kg_construction():
             self.in_date_admit = [np.int(i) for i in self.in_time_admit[0].split('-')]
             self.in_time_admit = [np.int(i) for i in self.in_time_admit[1].split(':')[0:-1]]
 
+
+            difference_month = self.in_date_death[1]-self.in_date_admit[1]
+            difference_day = self.in_date_death[2]-self.in_date_admit[2]
+            difference_hour = self.in_time_death[0]-self.in_time_admit[0]
+
+            death_month = difference_month * 30 * 6
+            death_day = difference_day * 6
+            death_hour = np.int(np.floor(difference_hour / 4))
+
+            death_time = death_month + death_day + death_hour
+
             if not death_flag == 0:
-                difference_month = self.in_date_death[1]-self.in_date_admit[1]
-                difference_day = self.in_date_death[2]-self.in_date_admit[2]
-                difference_hour = self.in_time_death[0]-self.in_time_admit[0]
-
-                death_month = difference_month * 30 * 6
-                death_day = difference_day * 6
-                death_hour = np.int(np.floor(difference_hour / 4))
-
-                death_time = death_month + death_day + death_hour
-
                 self.dic_patient[i]['death_hour'] = death_time
             """
             for k in index_lab:
@@ -212,7 +213,7 @@ class kg_construction():
 
                     if self.prior_time < 0:
                         continue
-                    if self.prior_time > self.death_hour:
+                    if self.prior_time > death_time:
                         continue
                     if obv_id == 'CAC - BLOOD PRESSURE':
                         self.check_obv = obv_id
