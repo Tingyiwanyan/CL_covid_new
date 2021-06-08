@@ -51,18 +51,16 @@ class kg_construction():
                 print("found 20")
                 death_flag = 1
                 death_time = self.reg_ar[index_reg,15]
-                death_time = datetime.datetime.fromtimestamp(death_time/1000).strftime('%Y-%m-%d %H:%M:%S')
             elif not np.isnan(self.reg_ar[index_reg,14]):
                 death_flag = 1
                 death_time = self.reg_ar[index_reg,14]
-                death_time = datetime.datetime.fromtimestamp(death_time/1000).strftime('%Y-%m-%d %H:%M:%S')
             else:
                 death_flag = 0
                 death_time = 0
             if death_flag == 1:
                 if np.isnan(death_time):
                     continue
-
+            death_time = datetime.datetime.fromtimestamp(death_time / 1000).strftime('%Y-%m-%d %H:%M:%S')
             admit_date = self.reg_ar[index_reg,3]
             self.check_date = admit_date
             admit_date = datetime.datetime.fromtimestamp(admit_date/1000).strftime('%Y-%m-%d %H:%M:%S')
