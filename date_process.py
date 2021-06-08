@@ -27,7 +27,7 @@ class read_data_covid():
         self.lab_length = len(list(self.dic_lab.keys()))
 
         self.predict_window = 3
-
+        """
         for i in self.dic_lab.keys():
             values = [float(k) for k in self.dic_lab[i]['lab_value_patient']]
             up_value = np.percentile(values,95)
@@ -38,7 +38,7 @@ class read_data_covid():
             kg.dic_lab[i]['mean_value'] = mean_lab
             kg.dic_lab[i]['std'] = std_lab
 
-        """
+        
         for i in self.dic_vital.keys():
             values = [np.float(j) for j in kg.dic_vital[i]['value']]
             mean = np.mean(values)
