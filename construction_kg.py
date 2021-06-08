@@ -107,13 +107,13 @@ class kg_construction():
                 self.death_neighbor.append(i)
             else:
                 self.live_neighbor.append(i)
-            if not death_time == 0:
-                death_time = datetime.datetime.fromtimestamp(death_time/1000).strftime('%Y-%m-%d %H:%M:%S')
-                self.in_time_death = death_time.split(' ')
-                self.in_date_death = [np.int(i) for i in self.in_time_death[0].split('-')]
-                self.in_time_death = [np.int(i) for i in self.in_time_death[1].split(':')[0:-1]]
-            else:
-                self.death_value = 0
+            #if not death_time == 0:
+            death_time = datetime.datetime.fromtimestamp(death_time/1000).strftime('%Y-%m-%d %H:%M:%S')
+            self.in_time_death = death_time.split(' ')
+            self.in_date_death = [np.int(i) for i in self.in_time_death[0].split('-')]
+            self.in_time_death = [np.int(i) for i in self.in_time_death[1].split(':')[0:-1]]
+            #else:
+               # self.death_value = 0
 
             admit_date = self.reg_ar[index_reg,3]
             self.check_date = admit_date
