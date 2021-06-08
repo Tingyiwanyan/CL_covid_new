@@ -160,7 +160,7 @@ class kg_construction():
                 #date_time_value_lab = float(str(self.check_data_lab)[8:10])*60+float(str(self.check_data_lab)[10:12])
                 #self.total_time_value_lab = date_value_lab+date_time_value_lab
                 #self.dic_patient[i].setdefault('lab_time_check',[]).append(self.check_data_lab)
-                if obv_id in self.cricial_lab:
+                if obv_id in self.crucial_lab:
                     difference_month = date_month_value_lab - self.in_date_admit[0]
                     difference_day = date_day_value_lab - self.in_date_admit[1]
                     difference_hour = date_hour_value_lab - self.in_time_admit[0]
