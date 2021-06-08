@@ -110,8 +110,8 @@ class kg_construction():
             if not death_time == 0:
                 death_time = datetime.datetime.fromtimestamp(death_time/1000).strftime('%Y-%m-%d %H:%M:%S')
                 self.in_time_death = death_time.split(' ')
-                self.in_date_death = [np.int(i) for i in self.in_time[0].split('-')]
-                self.in_time_death = [np.int(i) for i in self.in_time[1].split(':')[0:-1]]
+                self.in_date_death = [np.int(i) for i in self.in_time_death[0].split('-')]
+                self.in_time_death = [np.int(i) for i in self.in_time_death[1].split(':')[0:-1]]
             else:
                 self.death_value = 0
 
@@ -131,8 +131,8 @@ class kg_construction():
             time value for admit
             """
             self.in_time_admit = admit_date.split(' ')
-            self.in_date_admit = [np.int(i) for i in self.in_time[0].split('-')]
-            self.in_time_admit = [np.int(i) for i in self.in_time[1].split(':')[0:-1]]
+            self.in_date_admit = [np.int(i) for i in self.in_time_admit[0].split('-')]
+            self.in_time_admit = [np.int(i) for i in self.in_time_admit[1].split(':')[0:-1]]
 
             if not self.death_value == 0:
                 difference_month = self.in_date_death[1]-self.in_date_admit[0]
