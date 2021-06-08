@@ -219,23 +219,21 @@ class kg_construction():
                         self.check_obv = obv_id
                         self.check_ar = self.vital_sign_ar[j]
                         self.check_value_presure = self.vital_sign_ar[j][3]
-                        value = self.vital_sign_ar[j][3].split('/')
-
-                        #if self.check_value_presure == '""':
-                            #continue
-                        if self.prior_time not in self.dic_patient[i]['prior_time_vital']:
-                            self.dic_patient[i]['prior_time_vital'][self.prior_time] = {}
-                            self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault('high', []).append(
-                                value[0])
-                            self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault('low', []).append(
-                                value[1])
-                        else:
-                            self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault('high', []).append(
-                                value[0])
-                            self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault('low', []).append(
-                                value[1])
-                        self.dic_vital['high'].setdefault('value', []).append(value[0])
-                        self.dic_vital['low'].setdefault('value', []).append(value[1])
+                        if not self.check_value_presure == '""':
+                            value = self.vital_sign_ar[j][3].split('/')
+                            if self.prior_time not in self.dic_patient[i]['prior_time_vital']:
+                                self.dic_patient[i]['prior_time_vital'][self.prior_time] = {}
+                                self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault('high', []).append(
+                                    value[0])
+                                self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault('low', []).append(
+                                    value[1])
+                            else:
+                                self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault('high', []).append(
+                                    value[0])
+                                self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault('low', []).append(
+                                    value[1])
+                            self.dic_vital['high'].setdefault('value', []).append(value[0])
+                            self.dic_vital['low'].setdefault('value', []).append(value[1])
                     else:
                         self.check_value = self.vital_sign_ar[j][3]
                         self.check_obv = obv_id
