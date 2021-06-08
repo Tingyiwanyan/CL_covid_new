@@ -148,6 +148,11 @@ class kg_construction():
 
             if not death_flag == 0:
                 self.dic_patient[i]['death_hour'] = death_time
+            else:
+                self.dic_patient[i]['discharge_hour'] = death_time
+
+            if death_time > 180:
+                continue
             """
             for k in index_lab:
                 obv_id = self.labtest_ar[k][2]
