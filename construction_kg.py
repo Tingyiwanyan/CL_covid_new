@@ -90,7 +90,10 @@ class kg_construction():
                 death_time = self.reg_ar[index_reg,14]
             else:
                 death_flag = 0
-                death_time = 0
+                self.discharge_time = self.reg_ar[index_reg,15]
+                if np.isnan(self.discharge_time):
+                    continue
+                death_time = self.discharge_time
             if death_flag == 1:
                 if np.isnan(death_time):
                     continue
