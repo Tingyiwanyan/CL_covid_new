@@ -64,6 +64,7 @@ class kg_construction():
                     continue
             admit_date = self.reg_ar[index_reg,3]
             admit_date = datetime.datetime.fromtimestamp(admit_date).strftime('%Y-%m-%d %H:%M:%S')
+            self.check_date = admit_date
             if i not in self.dic_patient.keys():
                 self.dic_patient[i] = {}
                 self.dic_patient[i]['death_flag'] = death_flag
