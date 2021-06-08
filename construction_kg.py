@@ -170,9 +170,9 @@ class kg_construction():
                     self.dic_lab[obv_id].setdefault('lab_value_patient',[]).append(value)
                     if self.prior_time not in self.dic_patient[i]['prior_time_lab']:
                         self.dic_patient[i]['prior_time_lab'][self.prior_time]={}
-                        self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(category,[]).append(value)
+                        self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(obv_id,[]).append(value)
                     else:
-                        self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(category,[]).append(value)
+                        self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(obv_id,[]).append(value)
 
             for j in index_vital:
                 obv_id = self.vital_sign_ar[j][2]
