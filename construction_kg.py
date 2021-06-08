@@ -190,6 +190,7 @@ class kg_construction():
                     else:
                         self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(obv_id,[]).append(value)
             
+            """
             for j in index_vital:
                 obv_id = self.vital_sign_ar[j][2]
                 if obv_id in self.crucial_vital:
@@ -199,8 +200,8 @@ class kg_construction():
                     date_day_value_lab = float(str(self.check_data_vital)[6:8])
                     date_hour_value_lab = float(str(self.check_data_vital)[8:10])
 
-                    difference_month = date_month_value_lab - self.in_date_admit[0]
-                    difference_day = date_day_value_lab - self.in_date_admit[1]
+                    difference_month = date_month_value_lab - self.in_date_admit[1]
+                    difference_day = date_day_value_lab - self.in_date_admit[2]
                     difference_hour = date_hour_value_lab - self.in_time_admit[0]
 
                     death_month = difference_month * 30 * 4
@@ -209,20 +210,18 @@ class kg_construction():
 
                     self.prior_time = death_month + death_day + death_hour
 
-                    #if self.prior_time < 0:
-                        #continue
+                    if self.prior_time < 0:
+                        continue
                     if self.prior_time > self.death_hour:
                         continue
                     if obv_id == 'CAC - BLOOD PRESSURE':
                         self.check_obv = obv_id
                         self.check_ar = self.vital_sign_ar[j]
                         self.check_value_presure = self.vital_sign_ar[j][3]
-                        try:
-                            value = self.vital_sign_ar[j][3].split('/')
-                        except:
-                            continue
-                        if self.check_value_presure == '""':
-                            continue
+                        value = self.vital_sign_ar[j][3].split('/')
+
+                        #if self.check_value_presure == '""':
+                            #continue
                         if self.prior_time not in self.dic_patient[i]['prior_time_vital']:
                             self.dic_patient[i]['prior_time_vital'][self.prior_time] = {}
                             self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault('high', []).append(
@@ -240,11 +239,11 @@ class kg_construction():
                         self.check_value = self.vital_sign_ar[j][3]
                         self.check_obv = obv_id
                         self.check_ar = self.vital_sign_ar[j]
-                        if self.check_value == '""':
-                            continue
+                        #if self.check_value == '""':
+                            #continue
                         value = float(self.vital_sign_ar[j][3])
-                        if np.isnan(value):
-                            continue
+                        #if np.isnan(value):
+                            #continue
                         if self.prior_time not in self.dic_patient[i]['prior_time_vital']:
                             self.dic_patient[i]['prior_time_vital'][self.prior_time] = {}
                             self.dic_patient[i]['prior_time_vital'][self.prior_time].setdefault(obv_id, []).append(
@@ -256,7 +255,7 @@ class kg_construction():
 
             index_count += 1
 
-            """
+
 
 
 
