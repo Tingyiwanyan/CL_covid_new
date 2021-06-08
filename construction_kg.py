@@ -42,7 +42,7 @@ class kg_construction():
         self.live_neighbor = []
         self.crucial_vital = ['CAC - BLOOD PRESSURE', 'CAC - TEMPERATURE', 'CAC - PULSE OXIMETRY',
                               'CAC - RESPIRATIONS', 'CAC - PULSE', 'CAC - HEIGHT', 'CAC - WEIGHT/SCALE']
-        self.cricial_lab = ['ALBUMIN', 'ALKPHOS', 'ALT', 'AMYLASE', 'AGAP', 'PTT', 'AST', \
+        self.crucial_lab = ['ALBUMIN', 'ALKPHOS', 'ALT', 'AMYLASE', 'AGAP', 'PTT', 'AST', \
                            'ATYPLYMPH', 'BANDS', 'BASOPHIL_PERC', 'BASOPHIL', 'DBILIRUBIN', \
                            'TBILIRUBIN', 'BLASTS', 'BNP', 'BUN', 'CRP', 'CALCIUMIONIZED_A', \
                            'CALCIUMIONIZED', 'CALCIUM', 'CHLORIDE', 'CPK', 'CKMB', 'BICARB', \
@@ -54,7 +54,6 @@ class kg_construction():
                            'PO2_A', 'PO2', 'POTASSIUM', 'POTASSIUM_A', 'PT', 'PROTEIN', 'RBCCNT', \
                            'RDW', 'SODIUM', 'SODIUM_A', 'TIBC', 'TRANSFERRINSAT', 'TROPONINI', 'URICACID', \
                            'CHLORIDE_A', 'WBC']
-
         self.index_covid = np.where(self.covid_ar[:,7]=='DETECTED')[0]
         self.mrn_covid = np.unique(self.covid_ar[self.index_covid,:][:,0])
         self.death_count = 0
@@ -78,13 +77,17 @@ class kg_construction():
                 self.dic_vital[i]['index'] = index_vital
                 index_vital += 1
 
+        index_count = 0
         for i in self.mrn_covid:
+            print(index_count)
             index_reg = np.where(i==self.reg_ar[:,0])[0][0]
             index_vital = np.where(i==self.vital_sign_ar[:,0])[0]
             index_lab = np.where(i==self.labtest_ar[:,0])[0]
             self.check =index_reg
+            self.check_lab = index_lab
+            self.check_vital = index_vital
             if self.reg_ar[index_reg,16] == '20' or self.reg_ar[index_reg,16] == 'EXP':
-                print("found 20")
+                #print("found 20")
                 death_flag = 1
                 death_time = self.reg_ar[index_reg,15]
             elif not np.isnan(self.reg_ar[index_reg,14]):
@@ -106,13 +109,9 @@ class kg_construction():
                 self.live_neighbor.append(i)
             if not death_time == 0:
                 death_time = datetime.datetime.fromtimestamp(death_time/1000).strftime('%Y-%m-%d %H:%M:%S')
-                self.in_time = death_time.split(' ')
-                in_date = [np.int(i) for i in self.in_time[0].split('-')]
-                in_date_value = (in_date[0] * 365.0 + in_date[1] * 30 + in_date[2]) * 24 * 60
-                self.in_time_ = [np.int(i) for i in self.in_time[1].split(':')[0:-1]]
-                in_time_value = self.in_time_[0] * 60.0 + self.in_time_[1]
-                total_in_time_value = in_date_value + in_time_value
-                self.death_value = total_in_time_value
+                self.in_time_death = death_time.split(' ')
+                self.in_date_death = [np.int(i) for i in self.in_time[0].split('-')]
+                self.in_time_death = [np.int(i) for i in self.in_time[1].split(':')[0:-1]]
             else:
                 self.death_value = 0
 
@@ -131,31 +130,48 @@ class kg_construction():
             """
             time value for admit
             """
-            self.in_time = admit_date.split(' ')
-            in_date = [np.int(i) for i in self.in_time[0].split('-')]
-            in_date_value = (in_date[0] * 365.0 + in_date[1] * 30 + in_date[2]) * 24 * 60
-            self.in_time_ = [np.int(i) for i in self.in_time[1].split(':')[0:-1]]
-            in_time_value = self.in_time_[0] * 60.0 + self.in_time_[1]
-            total_in_time_value = in_date_value + in_time_value
-            self.admit_value = total_in_time_value
+            self.in_time_admit = admit_date.split(' ')
+            self.in_date_admit = [np.int(i) for i in self.in_time[0].split('-')]
+            self.in_time_admit = [np.int(i) for i in self.in_time[1].split(':')[0:-1]]
 
             if not self.death_value == 0:
-                self.death_hour = np.int(np.floor(np.float((self.death_value-self.admit_value)/60)))
-                self.dic_patient[i]['death_hour'] = self.death_hour
+                difference_month = self.in_date_death[1]-self.in_date_admit[0]
+                difference_day = self.in_date_death[2]-self.in_date_admit[1]
+                difference_hour = self.in_time_death[0]-self.in_time_admit[0]
+
+                death_month = difference_month * 30 * 4
+                death_day = difference_day * 4
+                death_hour = np.int(np.floor(difference_hour / 6))
+
+                death_time = death_month + death_day + death_hour
+
+                self.dic_patient[i]['death_hour'] = death_time
 
             for k in index_lab:
                 obv_id = self.labtest_ar[k][2]
                 value = self.labtest_ar[k][3]
                 self.check_data_lab = self.labtest_ar[k][4]
-                date_year_value_lab = float(str(self.labtest_ar[k][4])[0:4])*365
-                date_day_value_lab = float(str(self.check_data_lab)[4:6])*30+float(str(self.check_data_lab)[6:8])
-                date_value_lab = (date_year_value_lab+date_day_value_lab)*24*60
-                date_time_value_lab = float(str(self.check_data_lab)[8:10])*60+float(str(self.check_data_lab)[10:12])
-                self.total_time_value_lab = date_value_lab+date_time_value_lab
-                self.dic_patient[i].setdefault('lab_time_check',[]).append(self.check_data_lab)
+                date_year_value_lab = float(str(self.labtest_ar[k][4])[0:4])
+                #date_day_value_lab = float(str(self.check_data_lab)[4:6])*30+float(str(self.check_data_lab)[6:8])
+                date_month_value_lab = float(str(self.check_data_lab)[4:6])
+                date_day_value_lab = float(str(self.check_data_lab)[6:8])
+                date_hour_value_lab = float(str(self.check_data_lab)[8:10])
+                #date_value_lab = (date_year_value_lab+date_day_value_lab)*24*60
+                #date_time_value_lab = float(str(self.check_data_lab)[8:10])*60+float(str(self.check_data_lab)[10:12])
+                #self.total_time_value_lab = date_value_lab+date_time_value_lab
+                #self.dic_patient[i].setdefault('lab_time_check',[]).append(self.check_data_lab)
                 if obv_id in self.cricial_lab:
+                    difference_month = date_month_value_lab - self.in_date_admit[0]
+                    difference_day = date_day_value_lab - self.in_date_admit[1]
+                    difference_hour = date_hour_value_lab - self.in_time_admit[0]
+
+                    death_month = difference_month * 30 * 4
+                    death_day = difference_day * 4
+                    death_hour = np.int(np.floor(difference_hour / 6))
+
+                    self.prior_time = death_month + death_day + death_hour
                     #category = self.dic_lab_category[obv_id]
-                    self.prior_time = np.int(np.floor(np.float((self.total_time_value_lab-self.admit_value)/60)))
+                    #self.prior_time = np.int(np.floor(np.float((self.total_time_value_lab-self.admit_value)/(60*6))))
                     if self.prior_time < 0:
                         continue
                     if self.prior_time > self.death_hour:
@@ -177,14 +193,22 @@ class kg_construction():
             for j in index_vital:
                 obv_id = self.vital_sign_ar[j][2]
                 if obv_id in self.crucial_vital:
-                    self.check_data = self.vital_sign_ar[j][4]
-                    self.dic_patient[i].setdefault('time_capture', []).append(self.check_data)
-                    date_year_value = float(str(self.vital_sign_ar[j][4])[0:4]) * 365
-                    date_day_value = float(str(self.check_data)[4:6]) * 30 + float(str(self.check_data)[6:8])
-                    date_value = (date_year_value + date_day_value) * 24 * 60
-                    date_time_value = float(str(self.check_data)[8:10]) * 60 + float(str(self.check_data)[10:12])
-                    total_time_value = date_value + date_time_value
-                    self.prior_time = np.int(np.floor(np.float((total_time_value - in_time_value) / 60)))
+                    self.check_data_vital = self.vital_sign_ar[j][4]
+
+                    date_month_value_lab = float(str(self.check_data_vital)[4:6])
+                    date_day_value_lab = float(str(self.check_data_vital)[6:8])
+                    date_hour_value_lab = float(str(self.check_data_vital)[8:10])
+
+                    difference_month = date_month_value_lab - self.in_date_admit[0]
+                    difference_day = date_day_value_lab - self.in_date_admit[1]
+                    difference_hour = date_hour_value_lab - self.in_time_admit[0]
+
+                    death_month = difference_month * 30 * 4
+                    death_day = difference_day * 4
+                    death_hour = np.int(np.floor(difference_hour / 6))
+
+                    self.prior_time = death_month + death_day + death_hour
+
                     if self.prior_time < 0:
                         continue
                     if self.prior_time > self.death_hour:
@@ -230,6 +254,7 @@ class kg_construction():
                                 value)
                         self.dic_vital[obv_id].setdefault('value', []).append(value)
 
+            index_count += 1
 
 
 
