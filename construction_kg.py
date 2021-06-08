@@ -153,7 +153,7 @@ class kg_construction():
 
             if death_time > 180:
                 continue
-            """
+
             for k in index_lab:
                 obv_id = self.labtest_ar[k][2]
                 value = self.labtest_ar[k][3]
@@ -167,13 +167,13 @@ class kg_construction():
                 #self.total_time_value_lab = date_value_lab+date_time_value_lab
                 #self.dic_patient[i].setdefault('lab_time_check',[]).append(self.check_data_lab)
                 if obv_id in self.crucial_lab:
-                    difference_month = date_month_value_lab - self.in_date_admit[0]
-                    difference_day = date_day_value_lab - self.in_date_admit[1]
+                    difference_month = date_month_value_lab - self.in_date_admit[1]
+                    difference_day = date_day_value_lab - self.in_date_admit[2]
                     difference_hour = date_hour_value_lab - self.in_time_admit[0]
 
-                    death_month = difference_month * 30 * 4
-                    death_day = difference_day * 4
-                    death_hour = np.int(np.floor(difference_hour / 6))
+                    death_month = difference_month * 30 * 6
+                    death_day = difference_day * 6
+                    death_hour = np.int(np.floor(difference_hour / 4))
 
                     self.prior_time = death_month + death_day + death_hour
                     #category = self.dic_lab_category[obv_id]
@@ -188,15 +188,15 @@ class kg_construction():
                         #continue
                     #if not value == value:
                         #continue
-
-                    self.dic_lab[obv_id].setdefault('lab_value_patient',[]).append(value)
-                    if self.prior_time not in self.dic_patient[i]['prior_time_lab']:
-                        self.dic_patient[i]['prior_time_lab'][self.prior_time]={}
-                        self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(obv_id,[]).append(value)
-                    else:
-                        self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(obv_id,[]).append(value)
+                    if value == value:
+                        self.dic_lab[obv_id].setdefault('lab_value_patient',[]).append(value)
+                        if self.prior_time not in self.dic_patient[i]['prior_time_lab']:
+                            self.dic_patient[i]['prior_time_lab'][self.prior_time]={}
+                            self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(obv_id,[]).append(value)
+                        else:
+                            self.dic_patient[i]['prior_time_lab'][self.prior_time].setdefault(obv_id,[]).append(value)
             
-            """
+
             for j in index_vital:
                 obv_id = self.vital_sign_ar[j][2]
                 if obv_id in self.crucial_vital:
