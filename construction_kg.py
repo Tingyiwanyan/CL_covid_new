@@ -219,7 +219,7 @@ class kg_construction():
                         self.check_obv = obv_id
                         self.check_ar = self.vital_sign_ar[j]
                         self.check_value_presure = self.vital_sign_ar[j][3]
-                        if not self.check_value_presure == '""':
+                        try:
                             value = self.vital_sign_ar[j][3].split('/')
                             if self.prior_time not in self.dic_patient[i]['prior_time_vital']:
                                 self.dic_patient[i]['prior_time_vital'][self.prior_time] = {}
@@ -234,6 +234,8 @@ class kg_construction():
                                     value[1])
                             self.dic_vital['high'].setdefault('value', []).append(value[0])
                             self.dic_vital['low'].setdefault('value', []).append(value[1])
+                        except:
+                            value = 0
                     else:
                         self.check_value = self.vital_sign_ar[j][3]
                         self.check_obv = obv_id
