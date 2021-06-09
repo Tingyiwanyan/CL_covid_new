@@ -6,7 +6,7 @@ import pandas as pd
 import json
 from os import listdir
 from seq_cl import seq_cl
-from traditional_baselin import tradition_b
+from traditional_baseline import tradition_b
 
 
 class read_data_covid():
