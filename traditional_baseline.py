@@ -7,6 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import SGDClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import average_precision_score
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.neighbors import NearestNeighbors
@@ -131,7 +132,10 @@ class tradition_b():
         #self.aquire_batch_data(0,self.test_data,self.length_test)
         self.aquire_batch_data(0, self.test_data, len(self.test_data))
         #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
+        print("auc")
         print(roc_auc_score(self.one_batch_logit, self.lr.predict_proba(self.one_batch_data)[:,1]))
+        print("auprc")
+        print(average_precision_score(self.one_batch_logit, self.lr.predict_proba(self.one_batch_data)[:, 1]))
 
 
     def random_forest(self):
@@ -143,4 +147,7 @@ class tradition_b():
     def test_random_forest(self):
         self.aquire_batch_data(0, self.test_data, len(self.test_data))
         #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
+        print("auc")
         print(roc_auc_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
+        print("auprc")
+        print(average_precision_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
