@@ -124,9 +124,9 @@ class read_data_covid():
         one_vital_sample = np.zeros(self.vital_length)
         #prior_times = [np.float(i) for i in self.dic_patient[mrn_id]['prior_time_vital']]
         hr_index = str(hr_index)
-        if hr_index in self.dic_patient[mrn_id]['prior_time_vital']:
+        if hr_index in self.dic_patient[mrn_id]['prior_time_vital'].keys():
             for i in range(self.vital_length):
-                vital_name = self.lab_list[i]
+                vital_name = self.vital_list[i]
                 if vital_name in self.dic_patient[mrn_id]['prior_time_vital'][hr_index]:
                     values = [np.float(k) for k in self.dic_patient[mrn_id]['prior_time_vital'][hr_index][vital_name]]
                     value = np.mean(values)
@@ -153,7 +153,7 @@ class read_data_covid():
         one_lab_sample = np.zeros(self.lab_length)
         #prior_times = [np.float(i) for i in self.dic_patient[mrn_id]['prior_time_lab']]
         hr_index =str(hr_index)
-        if hr_index in self.dic_patient[mrn_id]['prior_time_lab']:
+        if hr_index in self.dic_patient[mrn_id]['prior_time_lab'].keys():
             for i in range(self.lab_length):
                 lab_name = self.lab_list[i]
                 if lab_name in self.dic_patient[mrn_id]['prior_time_lab'][hr_index]:
