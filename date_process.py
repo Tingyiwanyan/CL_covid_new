@@ -27,9 +27,15 @@ class read_data_covid():
         self.lab_length = len(list(self.dic_lab.keys()))
 
         self.predict_window = 3
-        """
+
         for i in self.dic_lab.keys():
-            values = [float(k) for k in self.dic_lab[i]['lab_value_patient']]
+            values = []
+            for k in self.dic_lab[i]['lab_value_patient']:
+                try:
+                    k_ = np.float(k)
+                    values.append(k_)
+                except:
+                    continue
             up_value = np.percentile(values,95)
             low_value = np.percentile(values,5)
             values_ = [k for k in values if not (values>up_value and value<low_value)]
@@ -40,12 +46,21 @@ class read_data_covid():
 
         
         for i in self.dic_vital.keys():
-            values = [np.float(j) for j in kg.dic_vital[i]['value']]
-            mean = np.mean(values)
-            std = np.std(values)
+            values = []
+            for k in self.dic_vital[i]['lab_value_patient']:
+                try:
+                    k_ = np.float(k)
+                    values.append(k_)
+                except:
+                    continue
+            up_value = np.percentile(values, 95)
+            low_value = np.percentile(values, 5)
+            values_ = [k for k in values if not (values > up_value and value < low_value)]
+            mean = np.mean(values_)
+            std = np.std(values_)
             kg.dic_vital[i]['mean_value'] = mean
             kg.dic_vital[i]['std'] = std
-        """
+
 
 
 if __name__ == "__main__":
