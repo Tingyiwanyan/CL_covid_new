@@ -78,6 +78,11 @@ class read_data_covid():
             self.dic_vital[i]['mean_value'] = mean
             self.dic_vital[i]['std'] = std
 
+        index_lab = 0
+        for i in self.dic_lab.keys():
+            self.dic_lab[i]['index'] = index_lab
+            index_lab += 1
+
 
 
 if __name__ == "__main__":
