@@ -23,9 +23,6 @@ class read_data_covid():
         self.dic_vital = json.load(file_vital)
 
         self.time_sequence = 4
-        self.vital_length = len(list(self.dic_vital.keys()))
-        self.lab_length = len(list(self.dic_lab.keys()))
-
         self.predict_window = 3
 
         self.crucial_lab = ['ALBUMIN', 'ALKPHOS', 'ALT', 'AMYLASE', 'AGAP', 'PTT', 'AST', \
@@ -45,6 +42,8 @@ class read_data_covid():
             values = []
             if not 'lab_value_patient' in self.dic_lab[i].keys():
                 self.dic_lab.pop(i)
+                continue
+            if np.isnan(self.dic_lab[i]['mean_value']):
                 continue
             for k in self.dic_lab[i]['lab_value_patient']:
                 try:
@@ -82,6 +81,44 @@ class read_data_covid():
         for i in self.dic_lab.keys():
             self.dic_lab[i]['index'] = index_lab
             index_lab += 1
+
+        self.vital_length = len(list(self.dic_vital.keys()))
+        self.lab_length = len(list(self.dic_lab.keys()))
+        self.lab_list = self.dic_lab.keys()
+        self.vital_list = self.dic_vital.keys()
+
+
+    def assign_value_vital(self,hr_back,mrn_id):
+        self.one_date_vital = np.zeros((self.time_sequence, self.vital_length))
+        for i in range(self.time_sequence):
+            self.hr_current = hr_back - self.time_sequence - self.predict_window + i
+            if self.hr_crrent < 0:
+                self.hr_current = 0
+
+            self.one_data_vital[i,:] = self.assign_value_lab_single(self.hr_current,mrn_id)
+
+    def assign_value_vital_single(self,hr_index,mrn_id):
+        one_vital_sample = np.zeros(self.lab_length)
+        if hr_index in self.dic_patient[mrn_id]['prior_time_vital']:
+            for i in range(self.lab_length):
+                lab_name = self.lab_list[i]
+                if lab_name in self.dic_patient[mrn_id]['prior_time_vital'][hr_index]:
+                    values = []
+                    for k in self.dic_patient[mrn_id]['prior_time_vital'][hr_index][lab_name]:
+                        try:
+                            k_ = np.float(k)
+                            values.append(k_)
+                        except:
+                            continue
+                    value = np.mean(values)
+                    mean_value = self.dic_lab[lab_name]['mean_value']
+                    std_value = self.dic_lab[lab_name]['std']
+
+                    one_vital_sample[i] = value
+
+
+        return one_vital_sample
+
 
 
 
