@@ -172,3 +172,17 @@ class tradition_b():
         print(roc_auc_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
         print("auprc")
         print(average_precision_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
+
+    def real_time_prediction(self,name):
+        self.hour = []
+        self.mortality_risk = []
+        if self.dic_patient[name]['death_flag'] == 1:
+            self.logit_label = 1
+            self.hr_onset = np.float(self.dic_patient[name]['death_hour'])
+        else:
+            self.logit_label = 0
+            prior_times = np.max([np.float(i) for i in self.dic_patient[name]['prior_time_vital']])
+            #self.hr_onset = np.floor(np.random.uniform(0, hr_onset_up, 1))
+            self.hr_onset = np.floor(prior_times/2)
+
+        self.predict_window_start = self.hr_onset-self.predict_window

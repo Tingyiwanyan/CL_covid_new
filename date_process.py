@@ -108,6 +108,20 @@ class read_data_covid():
         self.vital_list = list(self.dic_vital.keys())
 
 
+    def return_tensor_data_dynamic(self,name,hr_onset):
+        self.one_data_tensor = np.zeros((self.time_sequence, self.vital_length + self.lab_length))
+        if self.dic_patient[name]['death_flag'] == 1:
+            self.logit_label = 1
+        else:
+            self.logit_label = 0
+
+        self.predict_window_start = hr_onset - self.predict_window
+
+        self.assign_value_vital(self.predict_window_start, name)
+        self.one_data_tensor[:, 0:self.vital_length] = self.one_data_vital
+        self.assign_value_lab(self.predict_window_start, name)
+        self.one_data_tensor[:, self.vital_length:self.vital_length + self.lab_length] = self.one_data_lab
+
     def return_tensor_data(self,name):
         self.one_data_tensor = np.zeros((self.time_sequence,self.vital_length+self.lab_length))
         if self.dic_patient[name]['death_flag'] == 1:
@@ -118,7 +132,6 @@ class read_data_covid():
             prior_times = np.max([np.float(i) for i in self.dic_patient[name]['prior_time_vital']])
             #self.hr_onset = np.floor(np.random.uniform(0, hr_onset_up, 1))
             self.hr_onset = np.floor(prior_times/2)
-            self.logit_label = 0
 
         self.predict_window_start = self.hr_onset-self.predict_window
 

@@ -441,3 +441,27 @@ class seq_cl():
         print(roc_auc_score(self.one_batch_logit, self.out_logit))
         print("auprc")
         print(average_precision_score(self.one_batch_logit, self.out_logit))
+
+    def real_time_prediction(self,name):
+        self.hour = []
+        self.mortality_risk = []
+        if self.dic_patient[name]['death_flag'] == 1:
+            self.logit_label = 1
+            self.hr_onset = np.float(self.dic_patient[name]['death_hour'])
+        else:
+            self.logit_label = 0
+            prior_times = np.max([np.float(i) for i in self.dic_patient[name]['prior_time_vital']])
+            #self.hr_onset = np.floor(np.random.uniform(0, hr_onset_up, 1))
+            self.hr_onset = prior_times
+
+        for i in range(self.hr_onset-self.predict_window):
+            self.one_data_tensor = np.zeros((1,self.time_sequence, self.vital_length + self.lab_length))
+            self.predict_window_start = i
+            self.assign_value_vital(self.predict_window_start, name)
+            self.one_data_tensor[0,:, 0:self.vital_length] = self.one_data_vital
+            self.assign_value_lab(self.predict_window_start, name)
+            self.one_data_tensor[0,:, self.vital_length:self.vital_length + self.lab_length] = self.one_data_lab
+            self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_tensor})
+            self.hour.append(i)
+            self.mortality_risk.append(i)
+
