@@ -34,6 +34,10 @@ class tradition_b():
         self.vital_length = self.read_d.vital_length
         self.lab_length = self.read_d.lab_length
         self.latent_dim = 100
+        self.epoch = 20
+        self.gamma = 2
+        self.tau = 1
+        self.batch_size = 64
 
         self.lr = LogisticRegression(random_state=0)
         self.rf = RandomForestClassifier(max_depth=100,random_state=0)
@@ -51,6 +55,7 @@ class tradition_b():
             one_data = np.mean(one_data,0)
             self.one_batch_data[i,:] = one_data
             self.one_batch_logit[i] = self.read_d.logit_label
+            self.one_batch_logit_dp[i,0] = self.read_d.logit_label
             #self.one_batch_data[i,self.vital_length+self.lab_length:] = self.read_d.one_data_tensor_static
             #self.one_batch_logit[i] = self.read_d.logit_label
             #self.one_batch_logit_dp[i,0] = self.read_d.logit_label
@@ -62,7 +67,7 @@ class tradition_b():
         self.input_x = tf.keras.backend.placeholder(
             [None, self.vital_length + self.lab_length])
         self.embedding = tf.compat.v1.layers.dense(inputs=self.input_x,
-                                                   units=50,
+                                                   units=self.latent_dim,
                                                    kernel_initializer=tf.keras.initializers.he_normal(seed=None),
                                                    activation=tf.nn.relu)
         self.logit_sig = tf.compat.v1.layers.dense(inputs=self.embedding,
@@ -101,7 +106,9 @@ class tradition_b():
                                                      #self.input_x_static:self.one_batch_data_static,
                                                      self.input_y_logit: self.one_batch_logit_dp})
                                                      #self.init_hiddenstate: init_hidden_state})
-                print(self.err_[0])
+                #print(self.err_[0])
+            print("epoch")
+            print(i)
             self.MLP_test()
 
     def MLP_test(self):
@@ -112,7 +119,10 @@ class tradition_b():
         self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
                                                                   #self.init_hiddenstate: init_hidden_state})
                                                                   #self.input_x_static: self.one_batch_data_static})
+        print("auc")
         print(roc_auc_score(self.one_batch_logit, self.out_logit))
+        print("auprc")
+        print(average_precision_score(self.one_batch_logit, self.out_logit))
 
 
 
