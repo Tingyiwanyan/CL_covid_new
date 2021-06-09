@@ -321,8 +321,6 @@ class seq_cl():
                 self.patient_pos_sample_tensor
             self.one_batch_data_neg[i * self.negative_sample_size:(i + 1) * self.negative_sample_size, :, :] = \
                 self.patient_neg_sample_tensor
-            self.one_batch_data_neg_self[i * self.negative_sample_size:(i + 1) * self.negative_sample_size, :, :] = \
-                self.patient_neg_sample_tensor_self
 
     def aquire_pos_data_random(self,label):
         #print("im in pos")
