@@ -6,6 +6,7 @@ import pandas as pd
 import json
 from os import listdir
 from seq_cl import seq_cl
+from traditional_baselin import tradition_b
 
 
 class read_data_covid():
@@ -197,3 +198,5 @@ class read_data_covid():
 
 if __name__ == "__main__":
     read_d = read_data_covid()
+    seq = seq_cl(read_d)
+    tb = tradition_b(read_d)
