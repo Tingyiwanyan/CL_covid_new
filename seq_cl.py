@@ -454,7 +454,7 @@ class seq_cl():
             #self.hr_onset = np.floor(np.random.uniform(0, hr_onset_up, 1))
             self.hr_onset = prior_times
 
-        for i in range(self.hr_onset-self.predict_window):
+        for i in range(self.hr_onset-self.read_d.predict_window):
             self.one_data_tensor = np.zeros((1,self.time_sequence, self.vital_length + self.lab_length))
             self.predict_window_start = i
             self.assign_value_vital(self.predict_window_start, name)
