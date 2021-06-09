@@ -381,7 +381,7 @@ class seq_cl():
         for i in range(self.epoch_pre):
             for j in range(self.iteration):
                 #print(j)
-                self.aquire_batch_data_cl(j*self.batch_size, self.train_data, self.batch_size)
+                self.aquire_batch_data_cl_attribute(j*self.batch_size, self.train_data, self.batch_size)
                 self.err_ = self.sess.run([self.log_normalized_prob, self.train_step_cl,self.logit_sig],
                                           feed_dict={self.input_x: self.one_batch_data,
                                                      self.input_y_logit: self.one_batch_logit_dp,
