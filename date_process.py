@@ -132,7 +132,7 @@ class read_data_covid():
         for i in range(self.time_sequence):
             self.hr_current = hr_back - self.time_sequence + i
             if self.hr_current < 0:
-                self.hr_current = 0
+                self.hr_current = 0.0
 
             self.one_data_vital[i,:] = self.assign_value_vital_single(self.hr_current,mrn_id)
 
@@ -161,7 +161,7 @@ class read_data_covid():
         for i in range(self.time_sequence):
             self.hr_current = hr_back - self.time_sequence + i
             if self.hr_current < 0:
-                self.hr_current = 0
+                self.hr_current = 0.0
 
             self.one_data_lab[i,:] = self.assign_value_lab_single(self.hr_current,mrn_id)
 
