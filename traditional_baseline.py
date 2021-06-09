@@ -135,14 +135,12 @@ class tradition_b():
 
 
     def random_forest(self):
-        self.aquire_batch_data(0, self.train_data, 3000)
+        self.aquire_batch_data(0,self.train_data,len(self.train_data))
         self.rf.fit(self.one_batch_data, self.one_batch_logit)
-                # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
-                # print(roc_auc_score(self.one_batch_logit,self.lr.predict_proba(self.one_batch_data)[:,1]))
 
         self.test_random_forest()
 
     def test_random_forest(self):
-        self.aquire_batch_data(0,self.test_data,self.length_test)
+        sself.aquire_batch_data(0, self.test_data, len(self.test_data))
         #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         print(roc_auc_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
