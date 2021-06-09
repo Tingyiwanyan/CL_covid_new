@@ -301,7 +301,7 @@ class seq_cl():
         #print("im in pos")
         self.patient_pos_sample_tensor = \
             np.zeros((self.positive_sample_size, self.time_sequence,
-             self.vital_length + self.lab_length+self.blood_length))
+             self.vital_length + self.lab_length))
         if label == 1:
             index_neighbor = \
                 np.floor(np.random.uniform(0, self.len_death, self.positive_sample_size)).astype(int)
@@ -316,7 +316,7 @@ class seq_cl():
         #print("im in neg")
         self.patient_neg_sample_tensor = \
             np.zeros((self.negative_sample_size, self.time_sequence,
-                      self.vital_length + self.lab_length + self.blood_length))
+                      self.vital_length + self.lab_length))
         if label == 1:
             index_neighbor = \
                 np.floor(np.random.uniform(0, self.len_live, self.negative_sample_size)).astype(int)
