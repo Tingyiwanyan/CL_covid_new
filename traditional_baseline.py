@@ -173,16 +173,26 @@ class tradition_b():
         print("auprc")
         print(average_precision_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
 
-    def real_time_prediction(self,name):
+    def real_time_prediction_lg(self,name):
         self.hour = []
         self.mortality_risk = []
-        if self.dic_patient[name]['death_flag'] == 1:
+        if self.read_d.dic_patient[name]['death_flag'] == 1:
             self.logit_label = 1
-            self.hr_onset = np.float(self.dic_patient[name]['death_hour'])
+            self.hr_onset = np.float(self.read_d.dic_patient[name]['death_hour'])
         else:
             self.logit_label = 0
-            prior_times = np.max([np.float(i) for i in self.dic_patient[name]['prior_time_vital']])
+            prior_times = np.max([np.float(i) for i in self.read_d.dic_patient[name]['prior_time_vital']])
             #self.hr_onset = np.floor(np.random.uniform(0, hr_onset_up, 1))
-            self.hr_onset = np.floor(prior_times/2)
+            self.hr_onset = prior_times
 
-        self.predict_window_start = self.hr_onset-self.predict_window
+        for i in range(int(self.hr_onset-self.read_d.predict_window)):
+            self.one_data_tensor = np.zeros((self.time_sequence, self.vital_length + self.lab_length))
+            self.predict_window_start = i
+            self.read_d.assign_value_vital(self.predict_window_start, name)
+            self.one_data_tensor[:, 0:self.vital_length] = self.read_d.one_data_vital
+            self.read_d.assign_value_lab(self.predict_window_start, name)
+            self.one_data_tensor[:, self.vital_length:self.vital_length + self.lab_length] = self.read_d.one_data_lab
+            one_data = np.mean(self.one_data_tensor, 0)
+            self.predict_risk = self.lr.predict_proba(one_data)
+            self.hour.append(i)
+            self.mortality_risk.append(self.predict_risk)
