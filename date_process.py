@@ -24,8 +24,8 @@ class read_data_covid():
         self.dic_lab = json.load(file_lab)
         self.dic_vital = json.load(file_vital)
 
-        self.time_sequence = 3
-        self.predict_window = 6
+        self.time_sequence = 4
+        self.predict_window = 3
 
         self.crucial_lab = ['ALBUMIN', 'ALKPHOS', 'ALT', 'AMYLASE', 'AGAP', 'PTT', 'AST', \
                             'ATYPLYMPH', 'BANDS', 'BASOPHIL_PERC', 'BASOPHIL', 'DBILIRUBIN', \

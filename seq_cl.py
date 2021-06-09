@@ -26,6 +26,8 @@ class seq_cl():
         self.len_train = len(self.train_data)
         self.len_validate = len(self.validate_data)
         self.len_test = len(self.test_data)
+        self.len_death = len(self.death_data)
+        self.len_live = len(self.live_data)
 
 
         self.batch_size = 64
@@ -41,20 +43,20 @@ class seq_cl():
 
 
     def create_memory_bank(self):
-        self.memory_bank_cohort = np.zeros((self.train_length_cohort_mem,self.time_sequence,
-                                         self.vital_length + self.lab_length+self.blood_length))
-        self.memory_bank_control = np.zeros((self.train_length_control_mem,self.time_sequence,
-                                         self.vital_length + self.lab_length+self.blood_length))
+        self.memory_bank_cohort = np.zeros((self.len_death,self.time_sequence,
+                                         self.vital_length + self.lab_length))
+        self.memory_bank_control = np.zeros((self.len_live,self.time_sequence,
+                                         self.vital_length + self.lab_length))
 
-        for i in range(self.train_length_cohort_mem):
-            name = self.train_data_cohort_mem[i]
-            self.read_d.return_data_dynamic_cohort(name)
+        for i in range(self.len_death):
+            name = self.death_data[i]
+            self.read_d.return_tensor_data(name)
             one_data = self.read_d.one_data_tensor
             self.memory_bank_cohort[i, :, :] = one_data
 
-        for i in range(self.train_length_control_mem):
-            name = self.train_data_control_mem[i]
-            self.read_d.return_data_dynamic_control(name)
+        for i in range(self.len_live):
+            name = self.live_data[i]
+            self.read_d.return_tensor_data(name)
             one_data = self.read_d.one_data_tensor
             self.memory_bank_control[i, :, :] = one_data
 
@@ -238,35 +240,30 @@ class seq_cl():
             self.one_batch_data[i,:,:] = one_data
         self.one_batch_logit = list(self.one_batch_logit_dp[:,0])
 
-    def aquire_batch_data_cl(self,starting_index, data_set,length,logit_input):
+    def aquire_batch_data_cl(self,starting_index, data_set,length):
         self.one_batch_data = np.zeros((length,self.time_sequence,self.vital_length+self.lab_length+self.blood_length))
         self.one_batch_data_pos = np.zeros((length*self.positive_sample_size, self.time_sequence,
              self.vital_length + self.lab_length+self.blood_length))
         self.one_batch_data_neg = np.zeros((length*self.negative_sample_size, self.time_sequence,
              self.vital_length + self.lab_length+self.blood_length))
-        self.one_batch_data_neg_self = np.zeros((length * self.negative_sample_size, self.time_sequence,
-                                            self.vital_length + self.lab_length + self.blood_length))
-        self.one_batch_logit = np.array(list(logit_input[starting_index:starting_index+length]))
+
+        #self.one_batch_logit = np.array(list(logit_input[starting_index:starting_index+length]))
         self.one_batch_logit_dp = np.zeros((length,1))
-        self.one_batch_logit_dp[:,0] = self.one_batch_logit
+        #self.one_batch_logit_dp[:,0] = self.one_batch_logit
         for i in range(length):
-            name = data_set[starting_index+i]
-            label = self.one_batch_logit[i]
-            if self.one_batch_logit[i] == 1:
-                self.read_d.return_data_dynamic_cohort(name)
-            else:
-                self.read_d.return_data_dynamic_control(name)
+            name = data_set[starting_index + i]
+            self.read_d.return_tensor_data(name)
             one_data = self.read_d.one_data_tensor
-            self.one_batch_data[i,:,:] = one_data
+            self.one_batch_logit_dp[i, 0] = self.read_d.logit_label
+            self.one_batch_data[i, :, :] = one_data
             self.aquire_pos_data_random(label)
             self.aquire_neg_data_random(label)
-            self.aquire_neg_data_self(label)
             self.one_batch_data_pos[i*self.positive_sample_size:(i+1)*self.positive_sample_size,:,:] = \
                 self.patient_pos_sample_tensor
             self.one_batch_data_neg[i*self.negative_sample_size:(i+1)*self.negative_sample_size,:,:] = \
                 self.patient_neg_sample_tensor
-            self.one_batch_data_neg_self[i * self.negative_sample_size:(i + 1) * self.negative_sample_size, :, :] = \
-                self.patient_neg_sample_tensor_self
+        self.one_batch_logit = list(self.one_batch_logit_dp[:, 0])
+
 
     def aquire_batch_data_cl_attribute(self, starting_index, data_set, length, logit_input):
         self.one_batch_data = np.zeros(
@@ -306,11 +303,11 @@ class seq_cl():
              self.vital_length + self.lab_length+self.blood_length))
         if label == 1:
             index_neighbor = \
-                np.floor(np.random.uniform(0, self.train_length_cohort_mem, self.positive_sample_size)).astype(int)
+                np.floor(np.random.uniform(0, self.len_death, self.positive_sample_size)).astype(int)
             self.patient_pos_sample_tensor = self.memory_bank_cohort[index_neighbor,:,:]
         else:
             index_neighbor = \
-                np.floor(np.random.uniform(0, self.train_length_control_mem, self.positive_sample_size)).astype(int)
+                np.floor(np.random.uniform(0, self.len_live, self.positive_sample_size)).astype(int)
             self.patient_pos_sample_tensor = self.memory_bank_control[index_neighbor, :, :]
 
 
@@ -321,11 +318,11 @@ class seq_cl():
                       self.vital_length + self.lab_length + self.blood_length))
         if label == 1:
             index_neighbor = \
-                np.floor(np.random.uniform(0, self.train_length_control_mem, self.negative_sample_size)).astype(int)
+                np.floor(np.random.uniform(0, self.len_live, self.negative_sample_size)).astype(int)
             self.patient_neg_sample_tensor = self.memory_bank_control[index_neighbor,:,:]
         else:
             index_neighbor = \
-                np.floor(np.random.uniform(0, self.train_length_cohort_mem, self.negative_sample_size)).astype(int)
+                np.floor(np.random.uniform(0, self.len_death, self.negative_sample_size)).astype(int)
             self.patient_neg_sample_tensor = self.memory_bank_cohort[index_neighbor,:,:]
 
     def aquire_pos_data_attribute(self,label,name):
@@ -354,20 +351,22 @@ class seq_cl():
             self.patient_neg_sample_tensor = self.memory_bank_cohort[index_neighbor,:,:]
 
     def pre_train(self):
-        self.iteration = np.int(np.floor(np.float(self.length_train) / self.batch_size))
+        self.iteration = np.int(np.floor(np.float(self.len_train) / self.batch_size))
         for i in range(self.epoch):
             for j in range(self.iteration):
-                print(j)
-                self.aquire_batch_data_cl(j*self.batch_size, self.shuffle_train, self.batch_size,self.shuffle_logit)
+                #print(j)
+                self.aquire_batch_data_cl(j*self.batch_size, self.train_data, self.batch_size)
                 self.err_ = self.sess.run([self.log_normalized_prob_time, self.train_step_cl_time,self.logit_sig],
                                           feed_dict={self.input_x: self.one_batch_data,
                                                      self.input_y_logit: self.one_batch_logit_dp,
                                                      self.input_x_pos:self.one_batch_data_pos,
-                                                     self.input_x_neg:self.one_batch_data_neg,
-                                                     self.input_x_neg_self:self.one_batch_data_neg_self})
+                                                     self.input_x_neg:self.one_batch_data_neg})
 
-                print(self.err_[0])
-                print(roc_auc_score(self.one_batch_logit, self.err_[2]))
+                #print(self.err_[0])
+                #print(roc_auc_score(self.one_batch_logit, self.err_[2]))
+            print("epoch")
+            print(i)
+            self.test()
 
     def train(self):
         self.step = []
