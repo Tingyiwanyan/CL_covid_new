@@ -99,7 +99,7 @@ class tradition_b():
         self.iteration = np.int(np.floor(np.float(self.len_train) / self.batch_size))
         for i in range(self.epoch):
             for j in range(self.iteration):
-                print(j)
+                #print(j)
                 self.aquire_batch_data(j*self.batch_size, self.train_data, self.batch_size)
                 self.err_ = self.sess.run([self.focal_loss, self.train_step_fl],
                                           feed_dict={self.input_x: self.one_batch_data,
