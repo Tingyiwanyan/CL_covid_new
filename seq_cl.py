@@ -81,7 +81,7 @@ class seq_cl():
         # self.norm_knn = np.expand_dims(np.linalg.norm(self.knn_sim_matrix, axis=1), 1)
         # self.knn_sim_matrix = self.knn_sim_matrix / self.norm_knn
         # self.knn_sim_score_matrix = np.matmul(self.knn_sim_matrix[:,0:8], self.knn_sim_matrix[:,0:8].T)
-        self.knn_nbrs = NearestNeighbors(n_neighbors=self.train_length_cohort_mem, algorithm='ball_tree').fit(
+        self.knn_nbrs = NearestNeighbors(n_neighbors=self.len_death, algorithm='ball_tree').fit(
             self.knn_sim_matrix[:, :])
         distance, indices = self.knn_nbrs.kneighbors(self.knn_sim_matrix[:, :])
         for i in range(self.len_death):
@@ -128,7 +128,7 @@ class seq_cl():
         # self.norm_knn = np.expand_dims(np.linalg.norm(self.knn_sim_matrix, axis=1), 1)
         # self.knn_sim_matrix = self.knn_sim_matrix / self.norm_knn
         # self.knn_sim_score_matrix = np.matmul(self.knn_sim_matrix[:,0:8], self.knn_sim_matrix[:,0:8].T)
-        self.knn_nbrs = NearestNeighbors(n_neighbors=self.train_length_control_mem, algorithm='ball_tree').fit(
+        self.knn_nbrs = NearestNeighbors(n_neighbors=self.len_live, algorithm='ball_tree').fit(
             self.knn_sim_matrix[:, :])
         distance, indices = self.knn_nbrs.kneighbors(self.knn_sim_matrix[:, :])
         for i in range(self.len_live):
