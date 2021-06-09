@@ -404,9 +404,9 @@ class seq_cl():
                 self.aquire_batch_data_cl(j*self.batch_size, self.train_data, self.batch_size)
                 self.err_ = self.sess.run([self.focal_loss, self.train_step_combine_fl,self.logit_sig],
                                           feed_dict={self.input_x: self.one_batch_data,
-                                                     self.input_y_logit: self.one_batch_logit_dp})
-                                                     #self.input_x_pos:self.one_batch_data_pos,
-                                                     #self.input_x_neg:self.one_batch_data_neg})
+                                                     self.input_y_logit: self.one_batch_logit_dp,#})
+                                                     self.input_x_pos:self.one_batch_data_pos,
+                                                     self.input_x_neg:self.one_batch_data_neg})
             print("epoch")
             print(i)
             self.val()
