@@ -255,6 +255,7 @@ class seq_cl():
             self.read_d.return_tensor_data(name)
             one_data = self.read_d.one_data_tensor
             self.one_batch_logit_dp[i, 0] = self.read_d.logit_label
+            label = self.read_d.logit_label
             self.one_batch_data[i, :, :] = one_data
             self.aquire_pos_data_random(label)
             self.aquire_neg_data_random(label)
