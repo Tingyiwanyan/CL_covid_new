@@ -39,7 +39,7 @@ class seq_cl():
         self.latent_dim = 100
         self.time_sequence = self.read_d.time_sequence
         self.positive_sample_size = 4
-        self.negative_sample_size = 10
+        self.negative_sample_size = 20
 
 
     def create_memory_bank(self):
@@ -241,11 +241,11 @@ class seq_cl():
         self.one_batch_logit = list(self.one_batch_logit_dp[:,0])
 
     def aquire_batch_data_cl(self,starting_index, data_set,length):
-        self.one_batch_data = np.zeros((length,self.time_sequence,self.vital_length+self.lab_length+self.blood_length))
+        self.one_batch_data = np.zeros((length,self.time_sequence,self.vital_length+self.lab_length))
         self.one_batch_data_pos = np.zeros((length*self.positive_sample_size, self.time_sequence,
-             self.vital_length + self.lab_length+self.blood_length))
+             self.vital_length + self.lab_length))
         self.one_batch_data_neg = np.zeros((length*self.negative_sample_size, self.time_sequence,
-             self.vital_length + self.lab_length+self.blood_length))
+             self.vital_length + self.lab_length))
 
         #self.one_batch_logit = np.array(list(logit_input[starting_index:starting_index+length]))
         self.one_batch_logit_dp = np.zeros((length,1))
