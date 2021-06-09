@@ -38,7 +38,7 @@ class seq_cl():
         self.tau = 1
         self.latent_dim = 100
         self.time_sequence = self.read_d.time_sequence
-        self.positive_sample_size = 4
+        self.positive_sample_size = 5
         self.negative_sample_size = 20
 
 
