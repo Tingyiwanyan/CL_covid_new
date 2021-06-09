@@ -186,7 +186,7 @@ class tradition_b():
             self.hr_onset = prior_times
 
         for i in range(int(self.hr_onset-self.read_d.predict_window)):
-            self.one_data_tensor = np.zeros((self.time_sequence, self.vital_length + self.lab_length))
+            self.one_data_tensor = np.zeros((self.read_d.time_sequence, self.vital_length + self.lab_length))
             self.predict_window_start = i
             self.read_d.assign_value_vital(self.predict_window_start, name)
             self.one_data_tensor[:, 0:self.vital_length] = self.read_d.one_data_vital
