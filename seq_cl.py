@@ -24,7 +24,7 @@ class seq_cl():
         self.live_data = self.read_d.live_data
         self.len_train = len(self.train_data)
         self.len_validate = len(self.validate_data)
-        self.len_test = lenn(self.test_data)
+        self.len_test = len(self.test_data)
 
 
         self.batch_size = 256
