@@ -161,14 +161,8 @@ class seq_cl():
         bce = tf.keras.losses.BinaryCrossentropy()
         self.x_origin = self.whole_seq_output[:,self.time_sequence-1,:]
         self.x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
-        self.x_skip_contrast_time = self.whole_seq_out_pos_reshape
-        self.x_skip_contrast_self = self.whole_seq_output[:,self.time_sequence-self.positive_sample_size_self:,:]
         self.x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
-        self.x_negative_contrast_time = self.whole_seq_out_neg_reshape
-        self.x_negative_contrast_self = self.whole_seq_out_neg_self_reshape[:,:,self.time_sequence-1,:]
         self.contrastive_learning()
-        self.contrastive_learning_time()
-        self.contrastive_learning_self()
         self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
                                                    units=1,
                                                    kernel_initializer=tf.keras.initializers.he_normal(seed=None),
@@ -176,8 +170,6 @@ class seq_cl():
         self.cross_entropy = bce(self.logit_sig, self.input_y_logit)
         self.train_step_ce = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.cross_entropy)
         self.train_step_cl = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.log_normalized_prob)
-        self.train_step_cl_time = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.log_normalized_prob_time)
-        self.train_step_cl_self = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.log_normalized_prob_self)
         """
         focal loss
         """
