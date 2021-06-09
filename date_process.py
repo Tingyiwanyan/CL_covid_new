@@ -86,8 +86,8 @@ class read_data_covid():
 
         self.vital_length = len(list(self.dic_vital.keys()))
         self.lab_length = len(list(self.dic_lab.keys()))
-        self.lab_list = self.dic_lab.keys()
-        self.vital_list = self.dic_vital.keys()
+        self.lab_list = list(self.dic_lab.keys())
+        self.vital_list = list(self.dic_vital.keys())
 
 
     def return_tensor_data(self,name):
@@ -97,8 +97,9 @@ class read_data_covid():
             self.hr_onset = np.float(self.dic_patient[name]['death_hour'])
         else:
             self.logit_label = 0
-            hr_onset_up = np.float(self.dic_patient[name]['discharge_hour'])
-            self.hr_onset = np.floor(np.random.uniform(0, hr_onset_up, 1))
+            prior_times = np.max([np.float(i) for i in self.dic_patient[mrn_id]['prior_time_lab']])
+            #self.hr_onset = np.floor(np.random.uniform(0, hr_onset_up, 1))
+            self.hr_onset = np.floor(prior_times/2)
             self.logit_label = 0
 
         self.predict_window_start = self.hr_onset-self.predict_window
