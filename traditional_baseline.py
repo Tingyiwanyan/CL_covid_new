@@ -48,7 +48,7 @@ class tradition_b():
             #one_data[one_data==0]=np.nan
             #one_data = np.nan_to_num(np.nanmean(one_data,0))
             one_data = np.mean(one_data,0)
-            self.one_batch_data_cohort[i,:] = one_data
+            self.one_batch_data[i,:] = one_data
             self.one_batch_logit[i] = self.read_d.logit_label
             #self.one_batch_data[i,self.vital_length+self.lab_length:] = self.read_d.one_data_tensor_static
             #self.one_batch_logit[i] = self.read_d.logit_label
