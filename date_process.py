@@ -114,7 +114,7 @@ class read_data_covid():
         self.one_data_vital = np.zeros((self.time_sequence, self.vital_length))
         for i in range(self.time_sequence):
             self.hr_current = hr_back - self.time_sequence + i
-            if self.hr_cuurrent < 0:
+            if self.hr_current < 0:
                 self.hr_current = 0
 
             self.one_data_vital[i,:] = self.assign_value_vital_single(self.hr_current,mrn_id)
