@@ -42,8 +42,8 @@ class read_data_covid():
 
             mean_lab = np.mean(values_)
             std_lab = np.std(values_)
-            kg.dic_lab[i]['mean_value'] = mean_lab
-            kg.dic_lab[i]['std'] = std_lab
+            self.dic_lab[i]['mean_value'] = mean_lab
+            self.dic_lab[i]['std'] = std_lab
 
         
         for i in self.dic_vital.keys():
@@ -59,8 +59,8 @@ class read_data_covid():
             values_ = [k for k in values if k < up_value and k > low_value]
             mean = np.mean(values_)
             std = np.std(values_)
-            kg.dic_vital[i]['mean_value'] = mean
-            kg.dic_vital[i]['std'] = std
+            self.dic_vital[i]['mean_value'] = mean
+            self.dic_vital[i]['std'] = std
 
 
 
