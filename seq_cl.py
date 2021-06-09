@@ -114,7 +114,7 @@ class seq_cl():
         """
         print("Im here in constructing knn graph")
 
-        self.knn_sim_matrix = np.zeros((self.train_length_control_mem,
+        self.knn_sim_matrix = np.zeros((self.len_live,
                                         self.vital_length + self.lab_length))
         self.knn_neighbor_control = {}
 
