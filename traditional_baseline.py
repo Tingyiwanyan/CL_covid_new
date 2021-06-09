@@ -109,12 +109,23 @@ class tradition_b():
                 #print(self.err_[0])
             print("epoch")
             print(i)
-            self.MLP_test()
+            self.MLP_val()
 
     def MLP_test(self):
         #init_hidden_state = np.zeros(
             #(self.length_test, 1 + self.positive_sample_size + self.negative_sample_size, self.latent_dim))
         self.aquire_batch_data(0, self.test_data, self.len_test)
+        # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
+        self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
+                                                                  #self.init_hiddenstate: init_hidden_state})
+                                                                  #self.input_x_static: self.one_batch_data_static})
+        print("auc")
+        print(roc_auc_score(self.one_batch_logit, self.out_logit))
+        print("auprc")
+        print(average_precision_score(self.one_batch_logit, self.out_logit))
+
+    def MLP_val(self):
+        self.aquire_batch_data(0, self.validate_data, self.len_validate)
         # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
                                                                   #self.init_hiddenstate: init_hidden_state})

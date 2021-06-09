@@ -34,6 +34,7 @@ class seq_cl():
         self.vital_length = self.read_d.vital_length
         self.lab_length = self.read_d.lab_length
         self.epoch = 20
+        self.epoch_pre = 2
         self.gamma = 2
         self.tau = 1
         self.latent_dim = 100
@@ -66,13 +67,13 @@ class seq_cl():
         """
         print("Im here in constructing knn graph")
 
-        self.knn_sim_matrix = np.zeros((self.train_length_cohort_mem,
-                                        self.vital_length + self.lab_length+self.blood_length))
+        self.knn_sim_matrix = np.zeros((self.len_death,
+                                        self.vital_length + self.lab_length))
         self.knn_neighbor = {}
 
-        for i in range(self.train_length_cohort_mem):
-            name = self.train_data_cohort_mem[i]
-            self.read_d.return_data_dynamic_cohort(name)
+        for i in range(self.len_death):
+            name = self.death_data[i]
+            self.read_d.return_tensor_data(name)
             one_data = self.read_d.one_data_tensor
             one_data = np.mean(one_data, 0)
             self.knn_sim_matrix[i, :] = one_data
@@ -83,20 +84,20 @@ class seq_cl():
         self.knn_nbrs = NearestNeighbors(n_neighbors=self.train_length_cohort_mem, algorithm='ball_tree').fit(
             self.knn_sim_matrix[:, :])
         distance, indices = self.knn_nbrs.kneighbors(self.knn_sim_matrix[:, :])
-        for i in range(self.train_length_cohort_mem):
+        for i in range(self.len_death):
             # print(i)
             # vec = np.argsort(self.knn_sim_score_matrix[i, :])
             # vec = vec[::-1]
             self.vec = indices
-            #center_patient_id = self.train_data_cohort_mem[i]
+            # center_patient_id = self.train_data_cohort_mem[i]
             center_patient_id = i
-            center_patient_id_name = self.train_data_cohort_mem[i]
+            center_patient_id_name = self.death_data[i]
             index = 0
-            for j in range(self.train_length_cohort_mem):
+            for j in range(self.len_death):
                 if index == self.positive_sample_size:
                     break
-                #compare_patient_id = self.train_data_cohort_mem[self.vec[i, j]]
-                compare_patient_id = self.vec[i,j]
+                # compare_patient_id = self.train_data_cohort_mem[self.vec[i, j]]
+                compare_patient_id = self.vec[i, j]
                 if compare_patient_id == center_patient_id:
                     continue
                 if center_patient_id_name not in self.knn_neighbor.keys():
@@ -107,20 +108,50 @@ class seq_cl():
 
                 index = index + 1
 
-            index=0
-            for j in range(self.train_length_cohort_mem):
-                if index == self.negative_sample_size:
+    def construct_knn_attribute_control(self):
+        """
+        construct knn graph at every epoch using attribute information
+        """
+        print("Im here in constructing knn graph")
+
+        self.knn_sim_matrix = np.zeros((self.train_length_control_mem,
+                                        self.vital_length + self.lab_length))
+        self.knn_neighbor_control = {}
+
+        for i in range(self.len_live):
+            name = self.live_data[i]
+            self.read_d.return_tensor_data(name)
+            one_data = self.read_d.one_data_tensor
+            one_data = np.mean(one_data, 0)
+            self.knn_sim_matrix[i, :] = one_data
+
+        # self.norm_knn = np.expand_dims(np.linalg.norm(self.knn_sim_matrix, axis=1), 1)
+        # self.knn_sim_matrix = self.knn_sim_matrix / self.norm_knn
+        # self.knn_sim_score_matrix = np.matmul(self.knn_sim_matrix[:,0:8], self.knn_sim_matrix[:,0:8].T)
+        self.knn_nbrs = NearestNeighbors(n_neighbors=self.train_length_control_mem, algorithm='ball_tree').fit(
+            self.knn_sim_matrix[:, :])
+        distance, indices = self.knn_nbrs.kneighbors(self.knn_sim_matrix[:, :])
+        for i in range(self.len_live):
+            # print(i)
+            # vec = np.argsort(self.knn_sim_score_matrix[i, :])
+            # vec = vec[::-1]
+            self.vec = indices
+            #center_patient_id = self.train_data_cohort_mem[i]
+            center_patient_id = i
+            center_patient_id_name = self.live_data[i]
+            index = 0
+            for j in range(self.len_live):
+                if index == self.positive_sample_size:
                     break
-                #compare_patient_id = self.train_data_cohort_mem[self.vec[i,-1-j]]
-                compare_patient_id = self.vec[i, -1-j]
-                center_patient_id_name = self.train_data_cohort_mem[i]
+                #compare_patient_id = self.train_data_cohort_mem[self.vec[i, j]]
+                compare_patient_id = self.vec[i,j]
                 if compare_patient_id == center_patient_id:
                     continue
-                if center_patient_id_name not in self.knn_neighbor.keys():
-                    self.knn_neighbor[center_patient_id_name] = {}
-                    self.knn_neighbor[center_patient_id_name].setdefault('neg_knn_neighbor', []).append(compare_patient_id)
+                if center_patient_id_name not in self.knn_neighbor_control.keys():
+                    self.knn_neighbor_control[center_patient_id_name] = {}
+                    self.knn_neighbor_control[center_patient_id_name].setdefault('knn_neighbor', []).append(compare_patient_id)
                 else:
-                    self.knn_neighbor[center_patient_id_name].setdefault('neg_knn_neighbor', []).append(compare_patient_id)
+                    self.knn_neighbor_control[center_patient_id_name].setdefault('knn_neighbor', []).append(compare_patient_id)
 
                 index = index + 1
 
@@ -158,7 +189,9 @@ class seq_cl():
 
 
     def config_model(self):
-        #self.create_memory_bank()
+        self.create_memory_bank()
+        self.construct_knn_attribute_cohort()
+        self.construct_knn_attribute_control()
         self.LSTM_layers()
         bce = tf.keras.losses.BinaryCrossentropy()
         self.x_origin = self.whole_seq_output[:,self.time_sequence-1,:]
@@ -266,30 +299,23 @@ class seq_cl():
         self.one_batch_logit = list(self.one_batch_logit_dp[:, 0])
 
 
-    def aquire_batch_data_cl_attribute(self, starting_index, data_set, length, logit_input):
+    def aquire_batch_data_cl_attribute(self, starting_index, data_set, length):
         self.one_batch_data = np.zeros(
-            (length, self.time_sequence, self.vital_length + self.lab_length + self.blood_length))
+            (length, self.time_sequence, self.vital_length + self.lab_length))
         self.one_batch_data_pos = np.zeros((length * self.positive_sample_size, self.time_sequence,
-                                            self.vital_length + self.lab_length + self.blood_length))
+                                            self.vital_length + self.lab_length))
         self.one_batch_data_neg = np.zeros((length * self.negative_sample_size, self.time_sequence,
-                                            self.vital_length + self.lab_length + self.blood_length))
-        self.one_batch_data_neg_self = np.zeros((length * self.negative_sample_size, self.time_sequence,
-                                                 self.vital_length + self.lab_length + self.blood_length))
-        self.one_batch_logit = np.array(list(logit_input[starting_index:starting_index + length]))
+                                            self.vital_length + self.lab_length))
+
         self.one_batch_logit_dp = np.zeros((length, 1))
-        self.one_batch_logit_dp[:, 0] = self.one_batch_logit
         for i in range(length):
-            name = data_set[starting_index + i]
-            label = self.one_batch_logit[i]
-            if self.one_batch_logit[i] == 1:
-                self.read_d.return_data_dynamic_cohort(name)
-            else:
-                self.read_d.return_data_dynamic_control(name)
+            self.read_d.return_tensor_data(name)
             one_data = self.read_d.one_data_tensor
+            self.one_batch_logit_dp[i, 0] = self.read_d.logit_label
+            label = self.read_d.logit_label
             self.one_batch_data[i, :, :] = one_data
             self.aquire_pos_data_attribute(label,name)
-            self.aquire_neg_data_attribute(label,name)
-            self.aquire_neg_data_self(label)
+            self.aquire_neg_data_random(label)
             self.one_batch_data_pos[i * self.positive_sample_size:(i + 1) * self.positive_sample_size, :, :] = \
                 self.patient_pos_sample_tensor
             self.one_batch_data_neg[i * self.negative_sample_size:(i + 1) * self.negative_sample_size, :, :] = \
@@ -330,7 +356,7 @@ class seq_cl():
         #print("im in pos")
         self.patient_pos_sample_tensor = \
             np.zeros((self.positive_sample_size, self.time_sequence,
-             self.vital_length + self.lab_length+self.blood_length))
+             self.vital_length + self.lab_length))
         if label == 1:
             index_neighbor = np.array(self.knn_neighbor[name]['knn_neighbor'])
             self.patient_pos_sample_tensor = self.memory_bank_cohort[index_neighbor,:,:]
@@ -353,10 +379,10 @@ class seq_cl():
 
     def pre_train(self):
         self.iteration = np.int(np.floor(np.float(self.len_train) / self.batch_size))
-        for i in range(self.epoch):
+        for i in range(self.epoch_pre):
             for j in range(self.iteration):
                 #print(j)
-                self.aquire_batch_data_cl(j*self.batch_size, self.train_data, self.batch_size)
+                self.aquire_batch_data_cl_attribute(j*self.batch_size, self.train_data, self.batch_size)
                 self.err_ = self.sess.run([self.log_normalized_prob, self.train_step_cl,self.logit_sig],
                                           feed_dict={self.input_x: self.one_batch_data,
                                                      self.input_y_logit: self.one_batch_logit_dp,
@@ -384,7 +410,7 @@ class seq_cl():
                                                      #self.input_x_neg:self.one_batch_data_neg})
             print("epoch")
             print(i)
-            self.test()
+            self.val()
 
             #print(self.err_[0])
             #auc = roc_auc_score(self.one_batch_logit, self.err_[2])
@@ -396,6 +422,18 @@ class seq_cl():
 
     def test(self):
         self.aquire_batch_data(0, self.test_data, self.len_test)
+        # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
+        self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
+                                                                  #self.init_hiddenstate: init_hidden_state})
+                                                                  #self.input_x_static: self.one_batch_data_static})
+        print("auc")
+        print(roc_auc_score(self.one_batch_logit, self.out_logit))
+        print("auprc")
+        print(average_precision_score(self.one_batch_logit, self.out_logit))
+
+
+    def val(self):
+        self.aquire_batch_data(0, self.validate_data, self.len_validate)
         # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
                                                                   #self.init_hiddenstate: init_hidden_state})
