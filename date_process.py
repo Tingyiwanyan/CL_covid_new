@@ -38,7 +38,8 @@ class read_data_covid():
                     continue
             up_value = np.percentile(values,95)
             low_value = np.percentile(values,5)
-            values_ = [k for k in values if not (values>up_value and value<low_value)]
+            values_ = [k for k in values if k < up_value and k > low_value]
+
             mean_lab = np.mean(values_)
             std_lab = np.std(values_)
             kg.dic_lab[i]['mean_value'] = mean_lab
@@ -55,7 +56,7 @@ class read_data_covid():
                     continue
             up_value = np.percentile(values, 95)
             low_value = np.percentile(values, 5)
-            values_ = [k for k in values if not (values > up_value and value < low_value)]
+            values_ = [k for k in values if k < up_value and k > low_value]
             mean = np.mean(values_)
             std = np.std(values_)
             kg.dic_vital[i]['mean_value'] = mean
