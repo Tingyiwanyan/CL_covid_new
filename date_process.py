@@ -152,7 +152,8 @@ class read_data_covid():
                     std_value = self.dic_vital[vital_name]['std']
 
                     norm_value = (np.float(value) - mean_value) / std_value
-
+                    if np.isnan(norm_value):
+                        norm_value = 0
                     one_vital_sample[i] = norm_value
 
 
@@ -187,7 +188,8 @@ class read_data_covid():
                     std_value = self.dic_lab[lab_name]['std']
 
                     norm_value = (np.float(value) - mean_value) / std_value
-
+                    if np.isnan(norm_value):
+                        norm_value = 0
                     one_lab_sample[i] = norm_value
 
 
