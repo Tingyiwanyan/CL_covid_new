@@ -43,6 +43,15 @@ class read_data_covid():
             if self.dic_patient[i]['prior_time_vital'] == {}:
                 self.dic_patient.pop(i)
 
+        name_list = list(self.dic_patient.keys())
+        self.death_data = []
+        self.live_data = []
+        for i in name_list:
+            if self.dic_patient[i]['death_flag'] == 1:
+                self.death_data.append(i)
+            else:
+                self.live_data.append(i)
+
         for i in self.crucial_lab:
             values = []
             if not 'lab_value_patient' in self.dic_lab[i].keys():
