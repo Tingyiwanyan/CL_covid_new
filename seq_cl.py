@@ -463,5 +463,5 @@ class seq_cl():
             self.one_data_tensor[0,:, self.vital_length:self.vital_length + self.lab_length] = self.read_d.one_data_lab
             self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_data_tensor})
             self.hour.append(i)
-            self.mortality_risk.append(i)
+            self.mortality_risk.append(self.out_logit)
 
