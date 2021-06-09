@@ -135,7 +135,7 @@ class seq_cl():
         """
         self.input_x_pos = tf.keras.backend.placeholder(
             [self.batch_size*self.positive_sample_size, self.time_sequence,
-             self.vital_length + self.lab_length+self.blood_length])
+             self.vital_length + self.lab_length])
         self.whole_seq_output_pos, self.final_memory_state_pos, self.final_carry_state_pos = self.lstm(self.input_x_pos)
         self.whole_seq_out_pos_reshape = tf.reshape(self.whole_seq_output_pos,[self.batch_size,
                                                                                self.positive_sample_size,
@@ -147,7 +147,7 @@ class seq_cl():
         """
         self.input_x_neg = tf.keras.backend.placeholder(
             [self.batch_size * self.negative_sample_size, self.time_sequence,
-             self.vital_length + self.lab_length + self.blood_length])
+             self.vital_length + self.lab_length])
         self.whole_seq_output_neg, self.final_memory_state_neg, self.final_carry_state_neg = self.lstm(self.input_x_neg)
         self.whole_seq_out_neg_reshape = tf.reshape(self.whole_seq_output_neg, [self.batch_size,
                                                                                 self.negative_sample_size,
