@@ -372,7 +372,7 @@ class seq_cl():
     def train(self):
         self.step = []
         self.acc = []
-        self.iteration = np.int(np.floor(np.float(self.length_train) / self.batch_size))
+        self.iteration = np.int(np.floor(np.float(self.len_train) / self.batch_size))
         for i in range(self.epoch):
             for j in range(self.iteration):
                 #print(j)
