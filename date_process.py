@@ -5,6 +5,7 @@ import time
 import pandas as pd
 import json
 from os import listdir
+from seq_cl import seq_cl
 
 
 class read_data_covid():

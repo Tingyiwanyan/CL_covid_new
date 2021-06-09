@@ -16,35 +16,28 @@ class seq_cl():
     """
     def __init__(self, read_d):
         self.read_d = read_d
-        self.train_data_cohort = read_d.file_names_cohort[0:1000]
-        self.train_data_control = read_d.file_names_control[0:7000]
-        self.test_data_cohort = read_d.file_names_cohort[1000:1400]
-        self.test_data_control = read_d.file_names_control[7000:14000]
-        self.train_data_cohort_mem = read_d.file_names_cohort[0:400]
-        self.train_data_control_mem = read_d.file_names_control[0:2000]
-        #self.train_data_cohort = self.train_data_cohort_mem
-        #self.train_data_control = self.train_data_control_mem
-        self.train_length_cohort_mem = len(self.train_data_cohort_mem)
-        self.train_length_control_mem = len(self.train_data_control_mem)
-        self.train_length_cohort = len(self.train_data_cohort)
-        self.train_length_control = len(self.train_data_control)
-       # self.train_length_cohort = self.train_length_cohort_mem
-       # self.train_length_control = self.train_length_control_mem
-        self.test_length_cohort = len(self.test_data_cohort)
-        self.test_length_control = len(self.test_data_control)
-        self.length_train = self.train_length_cohort+self.train_length_control
-        self.batch_size = 128
-        self.vital_length = 8
-        self.lab_length = 19
-        self.blood_length = 27
-        self.epoch = 2
+        all_data = list(self.read_d.dic_patient.keys())
+        self.train_data = all_data[0:3405]
+        self.validate_data = all_data[3405:3891]
+        self.test_data = all_data[3891:]
+        self.death_data = self.read_d.death_data
+        self.live_data = self.read_d.live_data
+        self.len_train = len(self.train_data)
+        self.len_validate = len(self.validate_data)
+        self.len_test = lenn(self.test_data)
+
+
+        self.batch_size = 256
+        self.vital_length = self.read_d.vital_length
+        self.lab_length = self.read_d.lab_length
+        self.epoch = 20
         self.gamma = 2
         self.tau = 1
         self.latent_dim = 100
         self.time_sequence = self.read_d.time_sequence
         self.positive_sample_size = 4
-        self.positive_sample_size_self = 2
         self.negative_sample_size = 10
+
         self.train_data_all = self.train_data_cohort + self.train_data_control
         self.logit = np.zeros(self.train_length_cohort+self.train_length_control)
         self.logit[0:self.train_length_cohort] = 1
