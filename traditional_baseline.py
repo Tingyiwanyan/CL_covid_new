@@ -96,7 +96,7 @@ class tradition_b():
     def MLP_train(self):
         #init_hidden_state = np.zeros(
             #(self.batch_size, 1 + self.positive_sample_size + self.negative_sample_size, self.latent_dim))
-        self.iteration = np.int(np.floor(np.float(self.length_train) / self.batch_size))
+        self.iteration = np.int(np.floor(np.float(self.len_train) / self.batch_size))
         for i in range(self.epoch):
             for j in range(self.iteration):
                 print(j)
@@ -114,7 +114,7 @@ class tradition_b():
     def MLP_test(self):
         #init_hidden_state = np.zeros(
             #(self.length_test, 1 + self.positive_sample_size + self.negative_sample_size, self.latent_dim))
-        self.aquire_batch_data(0, self.test_data, self.length_test)
+        self.aquire_batch_data(0, self.test_data, self.len_test)
         # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
                                                                   #self.init_hiddenstate: init_hidden_state})
