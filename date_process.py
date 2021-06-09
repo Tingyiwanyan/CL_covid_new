@@ -145,7 +145,7 @@ class read_data_covid():
     def assign_value_vital(self,hr_back,mrn_id):
         self.one_data_vital = np.zeros((self.time_sequence, self.vital_length))
         for i in range(self.time_sequence):
-            self.hr_current = hr_back - self.time_sequence + i
+            self.hr_current = np.float(hr_back - self.time_sequence + i)
             if self.hr_current < 0:
                 self.hr_current = 0.0
 
@@ -175,7 +175,7 @@ class read_data_covid():
     def assign_value_lab(self,hr_back,mrn_id):
         self.one_data_lab = np.zeros((self.time_sequence, self.lab_length))
         for i in range(self.time_sequence):
-            self.hr_current = hr_back - self.time_sequence + i
+            self.hr_current = np.float(hr_back - self.time_sequence + i)
             if self.hr_current < 0:
                 self.hr_current = 0.0
 
