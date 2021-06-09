@@ -90,23 +90,70 @@ class read_data_covid():
         self.vital_list = self.dic_vital.keys()
 
 
+    def return_tensor_data(self,name):
+        self.one_data_tensor = np.zeors((self.time_sequence,self.vital_length+self.lab_length))
+        if self.dic_patient[name]['death_flag'] == 1:
+            self.logit_label = 1
+            self.hr_onset = np.float(self.dic_patient[name]['death_hour'])
+        else:
+            self.logit_label = 0
+            hr_onset_up = np.float(self.dic_patient[name]['discharge_hour'])
+            self.hr_onset = np.floor(np.random.uniform(0, hr_onset_up, 1))
+            self.logit_label = 0
+
+        self.predict_window_start = self.hr_onset-self.predict_window
+
+        self.assign_value_vital(self.predict_window_start,name)
+        self.one_data_tensor[:,0:self.vital_length] = self.one_data_vital
+        self.assign_value_lab(self.predict_window_start,name)
+        self.one_data_tensor[:,self.vital_length:self.vital_length+self.lab_length] = self.one_data_lab
+
+
+
     def assign_value_vital(self,hr_back,mrn_id):
-        self.one_date_vital = np.zeros((self.time_sequence, self.vital_length))
+        self.one_data_vital = np.zeros((self.time_sequence, self.vital_length))
         for i in range(self.time_sequence):
-            self.hr_current = hr_back - self.time_sequence - self.predict_window + i
+            self.hr_current = hr_back - self.time_sequence + i
             if self.hr_crrent < 0:
                 self.hr_current = 0
 
-            self.one_data_vital[i,:] = self.assign_value_lab_single(self.hr_current,mrn_id)
+            self.one_data_vital[i,:] = self.assign_value_vital_single(self.hr_current,mrn_id)
 
     def assign_value_vital_single(self,hr_index,mrn_id):
-        one_vital_sample = np.zeros(self.lab_length)
+        one_vital_sample = np.zeros(self.vital_length)
         if hr_index in self.dic_patient[mrn_id]['prior_time_vital']:
+            for i in range(self.vital_length):
+                vital_name = self.lab_list[i]
+                if vital_name in self.dic_patient[mrn_id]['prior_time_vital'][hr_index]:
+                    values = [np.float(k) for k in self.dic_patient[mrn_id]['prior_time_vital'][hr_index][vital_name]]
+                    value = np.mean(values)
+                    mean_value = self.dic_vital[vital_name]['mean_value']
+                    std_value = self.dic_vital[vital_name]['std']
+
+                    norm_value = (np.float(value) - mean_value) / std_value
+
+                    one_vital_sample[i] = norm_value
+
+
+        return one_vital_sample
+
+    def assign_value_lab(self,hr_back,mrn_id):
+        self.one_data_lab = np.zeros((self.time_sequence, self.lab_length))
+        for i in range(self.time_sequence):
+            self.hr_current = hr_back - self.time_sequence + i
+            if self.hr_crrent < 0:
+                self.hr_current = 0
+
+            self.one_data_lab[i,:] = self.assign_value_lab_single(self.hr_current,mrn_id)
+
+    def assign_value_lab_single(self,hr_index,mrn_id):
+        one_lab_sample = np.zeros(self.lab_length)
+        if hr_index in self.dic_patient[mrn_id]['prior_time_lab']:
             for i in range(self.lab_length):
                 lab_name = self.lab_list[i]
-                if lab_name in self.dic_patient[mrn_id]['prior_time_vital'][hr_index]:
+                if lab_name in self.dic_patient[mrn_id]['prior_time_lab'][hr_index]:
                     values = []
-                    for k in self.dic_patient[mrn_id]['prior_time_vital'][hr_index][lab_name]:
+                    for k in self.dic_patient[mrn_id]['prior_time_lab'][hr_index][lab_name]:
                         try:
                             k_ = np.float(k)
                             values.append(k_)
@@ -116,10 +163,12 @@ class read_data_covid():
                     mean_value = self.dic_lab[lab_name]['mean_value']
                     std_value = self.dic_lab[lab_name]['std']
 
-                    one_vital_sample[i] = value
+                    norm_value = (np.float(value) - mean_value) / std_value
+
+                    one_lab_sample[i] = norm_value
 
 
-        return one_vital_sample
+        return one_lab_sample
 
 
 
