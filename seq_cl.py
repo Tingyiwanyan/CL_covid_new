@@ -309,6 +309,7 @@ class seq_cl():
 
         self.one_batch_logit_dp = np.zeros((length, 1))
         for i in range(length):
+            name = data_set[starting_index + i]
             self.read_d.return_tensor_data(name)
             one_data = self.read_d.one_data_tensor
             self.one_batch_logit_dp[i, 0] = self.read_d.logit_label
