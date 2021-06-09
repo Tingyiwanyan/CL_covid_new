@@ -457,9 +457,9 @@ class seq_cl():
         for i in range(int(self.hr_onset-self.read_d.predict_window)):
             self.one_data_tensor = np.zeros((1,self.time_sequence, self.vital_length + self.lab_length))
             self.predict_window_start = i
-            self.assign_value_vital(self.predict_window_start, name)
+            self.read_d.assign_value_vital(self.predict_window_start, name)
             self.one_data_tensor[0,:, 0:self.vital_length] = self.one_data_vital
-            self.assign_value_lab(self.predict_window_start, name)
+            self.read_d.assign_value_lab(self.predict_window_start, name)
             self.one_data_tensor[0,:, self.vital_length:self.vital_length + self.lab_length] = self.one_data_lab
             self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_tensor})
             self.hour.append(i)
