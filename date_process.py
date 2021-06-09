@@ -91,7 +91,7 @@ class read_data_covid():
 
 
     def return_tensor_data(self,name):
-        self.one_data_tensor = np.zeors((self.time_sequence,self.vital_length+self.lab_length))
+        self.one_data_tensor = np.zeros((self.time_sequence,self.vital_length+self.lab_length))
         if self.dic_patient[name]['death_flag'] == 1:
             self.logit_label = 1
             self.hr_onset = np.float(self.dic_patient[name]['death_hour'])
