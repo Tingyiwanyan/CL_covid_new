@@ -42,6 +42,8 @@ class read_data_covid():
         for i in name_list:
             if self.dic_patient[i]['prior_time_vital'] == {}:
                 self.dic_patient.pop(i)
+            if len(list(self.dic_patient[i]['prior_time_vital'].keys())) < 3:
+                self.dic_patient.pop(i)
 
         name_list = list(self.dic_patient.keys())
         self.death_data = []
