@@ -27,9 +27,12 @@ class read_data_covid():
         self.lab_length = len(list(self.dic_lab.keys()))
 
         self.predict_window = 3
-        """
+
         for i in self.dic_lab.keys():
             values = []
+            if not 'lab_value_patient' in self.dic_lab[i].keys():
+                self.dic_lab.pop(i)
+                continue
             for k in self.dic_lab[i]['lab_value_patient']:
                 try:
                     k_ = np.float(k)
@@ -61,7 +64,7 @@ class read_data_covid():
             std = np.std(values_)
             self.dic_vital[i]['mean_value'] = mean
             self.dic_vital[i]['std'] = std
-        """
+
 
 
 if __name__ == "__main__":
