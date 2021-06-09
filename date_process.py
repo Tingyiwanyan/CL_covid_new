@@ -38,6 +38,11 @@ class read_data_covid():
                             'RDW', 'SODIUM', 'SODIUM_A', 'TIBC', 'TRANSFERRINSAT', 'TROPONINI', 'URICACID', \
                             'CHLORIDE_A', 'WBC']
 
+        name_list = list(self.dic_patient.keys())
+        for i in name_list:
+            if self.dic_patient[i]['prior_time_vital'] == {}:
+                self.dic_patient.pop(i)
+
         for i in self.crucial_lab:
             values = []
             if not 'lab_value_patient' in self.dic_lab[i].keys():
