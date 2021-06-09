@@ -38,12 +38,6 @@ class seq_cl():
         self.positive_sample_size = 4
         self.negative_sample_size = 10
 
-        self.train_data_all = self.train_data_cohort + self.train_data_control
-        self.logit = np.zeros(self.train_length_cohort+self.train_length_control)
-        self.logit[0:self.train_length_cohort] = 1
-        self.test_data_all = self.test_data_cohort + self.test_data_control
-        self.logit_test = np.zeros(self.test_length_cohort+self.test_length_control)
-        self.logit_test[0:self.test_length_cohort] = 1
 
     def create_memory_bank(self):
         self.memory_bank_cohort = np.zeros((self.train_length_cohort_mem,self.time_sequence,
