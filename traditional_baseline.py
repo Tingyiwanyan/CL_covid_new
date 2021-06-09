@@ -20,25 +20,6 @@ class tradition_b():
 
     def __init__(self, read_d):
         self.read_d = read_d
-        #self.train_data = read_d.train_set
-        #self.test_data = read_d.test_set
-        #self.length_train = len(self.train_data)
-        #self.length_test = len(self.test_data)
-        self.train_data_cohort = read_d.file_names_cohort[0:500]
-        self.train_data_control = read_d.file_names_control[0:2000]
-        self.test_data_cohort = read_d.file_names_cohort[500:700]
-        self.test_data_control = read_d.file_names_control[2000:3000]
-        self.train_length_cohort = len(self.train_data_cohort)
-        self.train_length_control = len(self.train_data_control)
-        self.batch_size = 32
-        self.vital_length = 8
-        self.lab_length = 19
-        self.blood_length = 27
-        self.epoch = 2
-        self.gamma = 2
-        self.tau = 1
-
-        self.read_d = read_d
         all_data = list(self.read_d.dic_patient.keys())
         self.train_data = all_data[0:3405]
         self.validate_data = all_data[3405:3891]
