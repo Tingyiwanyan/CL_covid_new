@@ -64,7 +64,7 @@ class read_data_covid():
         
         for i in self.dic_vital.keys():
             values = []
-            for k in self.dic_vital[i]['lab_value_patient']:
+            for k in self.dic_vital[i]['value']:
                 try:
                     k_ = np.float(k)
                     values.append(k_)
