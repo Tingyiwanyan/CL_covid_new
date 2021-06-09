@@ -43,8 +43,6 @@ class read_data_covid():
             if not 'lab_value_patient' in self.dic_lab[i].keys():
                 self.dic_lab.pop(i)
                 continue
-            if np.isnan(self.dic_lab[i]['mean_value']):
-                continue
             for k in self.dic_lab[i]['lab_value_patient']:
                 try:
                     k_ = np.float(k)
@@ -60,6 +58,10 @@ class read_data_covid():
             self.dic_lab[i]['mean_value'] = mean_lab
             self.dic_lab[i]['std'] = std_lab
 
+        for i in self.crucial_lab:
+            if i in self.dic_lab.keys():
+                if np.isnan(self.dic_lab[i]['mean_value']):
+                    self.dic_lab.pop(i)
         
         for i in self.dic_vital.keys():
             values = []
