@@ -445,12 +445,12 @@ class seq_cl():
     def real_time_prediction(self,name):
         self.hour = []
         self.mortality_risk = []
-        if self.dic_patient[name]['death_flag'] == 1:
+        if self.read_d.dic_patient[name]['death_flag'] == 1:
             self.logit_label = 1
-            self.hr_onset = np.float(self.dic_patient[name]['death_hour'])
+            self.hr_onset = np.float(self.read_d.dic_patient[name]['death_hour'])
         else:
             self.logit_label = 0
-            prior_times = np.max([np.float(i) for i in self.dic_patient[name]['prior_time_vital']])
+            prior_times = np.max([np.float(i) for i in self.read_d.dic_patient[name]['prior_time_vital']])
             #self.hr_onset = np.floor(np.random.uniform(0, hr_onset_up, 1))
             self.hr_onset = prior_times
 
