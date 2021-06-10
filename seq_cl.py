@@ -193,7 +193,7 @@ class seq_cl():
                                                                                 self.time_sequence,
                                                                                 self.latent_dim])
 
-    def LSTM_layers_stack(self, whole_seq_input, seq_input_pos, seq_input_neg, output_dim):
+    def LSTM_layers_stack(self, whole_seq_input, seq_input_pos, seq_input_neg, output_dim,input_dim):
         lstm = tf.keras.layers.LSTM(output_dim, return_sequences=True, return_state=True)
 
         #whole_seq_output,final_memory_state,final_carry_state = lstm(whole_seq_input_act)
@@ -202,19 +202,25 @@ class seq_cl():
                                       kernel_regularizer=tf.keras.regularizers.l2(0.01),
                                       activity_regularizer=tf.keras.regularizers.l2(0.01)
                                       )
-        whole_seq_output_act = dense(whole_seq_input)
+        layer = tf.keras.layers.Dropout(.2, input_shape=(input_dim,))
+
+        whole_seq_output_ = dense(whole_seq_input)
+        whole_seq_output_act = layer(whole_seq_output_)
+
         whole_seq_output, final_memory_state, final_carry_state = lstm(whole_seq_output_act)
 
         """
         positive sample
         """
-        whole_seq_output_pos_act = dense(seq_input_pos)
+        whole_seq_output_pos_ = dense(seq_input_pos)
+        whole_seq_output_pos_act = layer(whole_seq_output_pos_)
         whole_seq_output_pos, final_memory_state_pos, final_carry_state_pos = lstm(whole_seq_output_pos_act)
 
         """
         negative sample
         """
-        whole_seq_output_neg_act= dense(seq_input_neg)
+        whole_seq_output_neg_= dense(seq_input_neg)
+        whole_seq_output_neg_act = layer(whole_seq_output_neg_)
         whole_seq_output_neg, final_memory_state_neg, final_carry_state_neg = lstm(whole_seq_output_neg_act)
 
         return whole_seq_output, whole_seq_output_pos, whole_seq_output_neg
