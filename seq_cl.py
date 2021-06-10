@@ -239,7 +239,7 @@ class seq_cl():
                                                                                 self.final_dim])
         """
         bce = tf.keras.losses.BinaryCrossentropy()
-        self.x_origin = whole_seq_output[:,self.time_sequence-1,:]
+        self.x_origin = self.whole_seq_output[:,self.time_sequence-1,:]
         self.x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
         self.x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
         self.contrastive_learning()
