@@ -11,7 +11,7 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.utils import resample
 import tensorflow as tf
 import numpy as np
-from keras.layers.core import Dropout
+#from keras.layers.core import Dropout
 from keras import regularizers
 import bootstrapped.bootstrap as bs
 import bootstrapped.stats_functions as bs_stats
