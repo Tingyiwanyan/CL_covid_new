@@ -155,6 +155,8 @@ class seq_cl():
 
                 index = index + 1
 
+    def construct_knn_feature(self):
+
 
     def LSTM_layers(self):
         self.lstm = tf.keras.layers.LSTM(self.latent_dim,return_sequences=True,return_state=True)
