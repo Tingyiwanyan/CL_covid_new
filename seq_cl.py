@@ -174,10 +174,10 @@ class seq_cl():
             [self.batch_size*self.positive_sample_size, self.time_sequence,
              self.vital_length + self.lab_length])
         self.whole_seq_output_pos, self.final_memory_state_pos, self.final_carry_state_pos = self.lstm(self.input_x_pos)
-        self.whole_seq_out_pos_reshape = tf.reshape(self.whole_seq_output_pos,[self.batch_size,
-                                                                               self.positive_sample_size,
-                                                                               self.time_sequence,
-                                                                               self.latent_dim])
+        #self.whole_seq_out_pos_reshape = tf.reshape(self.whole_seq_output_pos,[self.batch_size,
+                                                                               #self.positive_sample_size,
+                                                                               #self.time_sequence,
+                                                                               #self.latent_dim])
 
         """
         negative sample
@@ -186,10 +186,10 @@ class seq_cl():
             [self.batch_size * self.negative_sample_size, self.time_sequence,
              self.vital_length + self.lab_length])
         self.whole_seq_output_neg, self.final_memory_state_neg, self.final_carry_state_neg = self.lstm(self.input_x_neg)
-        self.whole_seq_out_neg_reshape = tf.reshape(self.whole_seq_output_neg, [self.batch_size,
-                                                                                self.negative_sample_size,
-                                                                                self.time_sequence,
-                                                                                self.latent_dim])
+        #self.whole_seq_out_neg_reshape = tf.reshape(self.whole_seq_output_neg, [self.batch_size,
+                                                                                #self.negative_sample_size,
+                                                                                #self.time_sequence,
+                                                                                #self.latent_dim])
 
     def LSTM_layers_stack(self, whole_seq_input, seq_input_pos, seq_input_neg, output_dim):
         lstm = tf.keras.layers.LSTM(output_dim, return_sequences=True, return_state=True)
@@ -226,11 +226,11 @@ class seq_cl():
         self.whole_seq_out_pos_reshape = tf.reshape(whole_seq_output_pos, [self.batch_size,
                                                                                 self.positive_sample_size,
                                                                                 self.time_sequence,
-                                                                                self.latent_dim])
+                                                                                self.layer2_dim])
         self.whole_seq_out_neg_reshape = tf.reshape(whole_seq_output_neg, [self.batch_size,
                                                                                 self.negative_sample_size,
                                                                                 self.time_sequence,
-                                                                                self.latent_dim])
+                                                                                self.layer2_dim])
 
         bce = tf.keras.losses.BinaryCrossentropy()
         self.x_origin = whole_seq_output[:,self.time_sequence-1,:]
