@@ -40,7 +40,7 @@ class seq_cl():
         self.epoch_pre = 10
         self.gamma = 2
         self.tau = 1
-        self.latent_dim = 50
+        self.latent_dim = 100
         self.layer2_dim = 50
         self.layer3_dim = 50
         self.final_dim = self.layer2_dim
@@ -199,7 +199,7 @@ class seq_cl():
         #whole_seq_output,final_memory_state,final_carry_state = lstm(whole_seq_input_act)
         dense = tf.keras.layers.Dense(output_dim, activation=tf.nn.relu,
                                       kernel_initializer=tf.keras.initializers.he_normal(seed=None),
-                                      kernel_regularizer=tf.keras.regularizers.l1(0.01),
+                                      kernel_regularizer=tf.keras.regularizers.l2(0.01),
                                       activity_regularizer=tf.keras.regularizers.l2(0.01)
                                       )
         whole_seq_output_act = dense(whole_seq_input)
@@ -253,6 +253,8 @@ class seq_cl():
         self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
                                                    units=1,
                                                    kernel_initializer=tf.keras.initializers.he_normal(seed=None),
+                                                   kernel_regularizer=tf.keras.regularizers.l2(0.01),
+                                                   activity_regularizer=tf.keras.regularizers.l2(0.01),
                                                    activation=tf.nn.sigmoid)
         self.cross_entropy = bce(self.logit_sig, self.input_y_logit)
         self.train_step_ce = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.cross_entropy)
