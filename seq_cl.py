@@ -198,7 +198,7 @@ class seq_cl():
 
         #whole_seq_output,final_memory_state,final_carry_state = lstm(whole_seq_input_act)
         dense = tf.keras.layers.Dense(output_dim, activation=tf.nn.relu,
-                                      kernal_initializer=tf.keras.initializers.he_normal(seed=None),
+                                      kernel_initializer=tf.keras.initializers.he_normal(seed=None),
                                       kernel_regularizer=tf.keras.regularizers.l1(0.01),
                                       activity_regularizer=tf.keras.regularizers.l2(0.01)
                                       )
