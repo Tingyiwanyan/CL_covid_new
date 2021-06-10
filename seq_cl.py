@@ -41,8 +41,9 @@ class seq_cl():
         self.gamma = 2
         self.tau = 1
         self.latent_dim = 100
-        self.layer2_dim = 50
-        self.final_dim = self.layer2_dim
+        self.layer2_dim = 100
+        self.layer3_dim = 50
+        self.final_dim = self.layer3_dim
         self.boost_iteration = 10
         self.time_sequence = self.read_d.time_sequence
         self.positive_sample_size = 5
@@ -220,9 +221,12 @@ class seq_cl():
         """
         LSTM stack layers
         """
-        whole_seq_output,whole_seq_output_pos,whole_seq_output_neg = \
+        whole_seq_output1,whole_seq_output_pos1,whole_seq_output_neg1 = \
             self.LSTM_layers_stack(self.whole_seq_output,
                                    self.whole_seq_output_pos,self.whole_seq_output_neg,self.layer2_dim)
+        whole_seq_output, whole_seq_output_pos, whole_seq_output_neg = \
+            self.LSTM_layers_stack(whole_seq_output1,
+                                   whole_seq_output_pos1, whole_seq_output_neg1, self.layer3_dim)
 
         self.whole_seq_out_pos_reshape = tf.reshape(whole_seq_output_pos, [self.batch_size,
                                                                                 self.positive_sample_size,
