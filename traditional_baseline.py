@@ -160,7 +160,7 @@ class tradition_b():
         auc = []
         auprc = []
         for i in range(self.boost_iteration):
-            test = resample(self.test_data,n_sample=sample_size)
+            test = resample(self.test_data,n_samples=sample_size)
             self.aquire_batch_data(0, test, len(test),self.read_d.time_sequence)
             #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
             auc.append(roc_auc_score(self.one_batch_logit, self.lr.predict_proba(self.one_batch_data)[:,1]))
