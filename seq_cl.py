@@ -8,6 +8,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
 from sklearn.neighbors import NearestNeighbors
+from sklearn.utils import resample
 import tensorflow as tf
 import numpy as np
 import bootstrapped.bootstrap as bs
