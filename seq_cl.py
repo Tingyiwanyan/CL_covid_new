@@ -34,7 +34,7 @@ class seq_cl():
         self.vital_length = self.read_d.vital_length
         self.lab_length = self.read_d.lab_length
         self.epoch = 20
-        self.epoch_pre = 2
+        self.epoch_pre = 10
         self.gamma = 2
         self.tau = 1
         self.latent_dim = 100
