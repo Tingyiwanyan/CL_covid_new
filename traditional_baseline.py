@@ -42,13 +42,13 @@ class tradition_b():
         self.lr = LogisticRegression(random_state=0)
         self.rf = RandomForestClassifier(max_depth=100,random_state=0)
 
-    def aquire_batch_data(self, starting_index, data_set,length):
+    def aquire_batch_data(self, starting_index, data_set,length, hr_onset):
         self.one_batch_data = np.zeros((length,self.vital_length+self.lab_length))#+self.static_length))
         self.one_batch_logit = list(np.zeros(length))
         self.one_batch_logit_dp = np.zeros((length,1))
         for i in range(length):
             name = data_set[starting_index+i]
-            self.read_d.return_tensor_data(name)
+            self.read_d.return_tensor_data_dynamic(name,hr_onset)
             one_data = self.read_d.one_data_tensor
             #one_data[one_data==0]=np.nan
             #one_data = np.nan_to_num(np.nanmean(one_data,0))
@@ -100,7 +100,7 @@ class tradition_b():
         for i in range(self.epoch):
             for j in range(self.iteration):
                 #print(j)
-                self.aquire_batch_data(j*self.batch_size, self.train_data, self.batch_size)
+                self.aquire_batch_data(j*self.batch_size, self.train_data, self.batch_size,self.read_d.time_sequence)
                 self.err_ = self.sess.run([self.focal_loss, self.train_step_fl],
                                           feed_dict={self.input_x: self.one_batch_data,
                                                      #self.input_x_static:self.one_batch_data_static,
@@ -114,7 +114,7 @@ class tradition_b():
     def MLP_test(self):
         #init_hidden_state = np.zeros(
             #(self.length_test, 1 + self.positive_sample_size + self.negative_sample_size, self.latent_dim))
-        self.aquire_batch_data(0, self.test_data, self.len_test)
+        self.aquire_batch_data(0, self.test_data, self.len_test,self.read_d.time_sequence)
         # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
                                                                   #self.init_hiddenstate: init_hidden_state})
@@ -125,7 +125,7 @@ class tradition_b():
         print(average_precision_score(self.one_batch_logit, self.out_logit))
 
     def MLP_val(self):
-        self.aquire_batch_data(0, self.validate_data, self.len_validate)
+        self.aquire_batch_data(0, self.validate_data, self.len_validate,self.read_d.time_sequence)
         # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
                                                                   #self.init_hiddenstate: init_hidden_state})
@@ -142,7 +142,7 @@ class tradition_b():
         #for i in range(self.epoch):
             #for j in range(self.iteration):
                 #print(j)
-        self.aquire_batch_data(0,self.train_data,len(self.train_data))
+        self.aquire_batch_data(0,self.train_data,len(self.train_data),self.read_d.time_sequence)
         self.lr.fit(self.one_batch_data,self.one_batch_logit)
                 #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
                 #print(roc_auc_score(self.one_batch_logit,self.lr.predict_proba(self.one_batch_data)[:,1]))
@@ -151,7 +151,7 @@ class tradition_b():
 
     def test_logistic_regression(self):
         #self.aquire_batch_data(0,self.test_data,self.length_test)
-        self.aquire_batch_data(0, self.test_data, len(self.test_data))
+        self.aquire_batch_data(0, self.test_data, len(self.test_data),self.read_d.time_sequence)
         #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         print("auc")
         print(roc_auc_score(self.one_batch_logit, self.lr.predict_proba(self.one_batch_data)[:,1]))
@@ -160,39 +160,15 @@ class tradition_b():
 
 
     def random_forest(self):
-        self.aquire_batch_data(0,self.train_data,len(self.train_data))
+        self.aquire_batch_data(0,self.train_data,len(self.train_data),self.read_d.time_sequence)
         self.rf.fit(self.one_batch_data, self.one_batch_logit)
 
         self.test_random_forest()
 
     def test_random_forest(self):
-        self.aquire_batch_data(0, self.test_data, len(self.test_data))
+        self.aquire_batch_data(0, self.test_data, len(self.test_data),self.read_d.time_sequence)
         #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         print("auc")
         print(roc_auc_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
         print("auprc")
         print(average_precision_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
-
-    def real_time_prediction_lg(self,name):
-        self.hour = []
-        self.mortality_risk = []
-        if self.read_d.dic_patient[name]['death_flag'] == 1:
-            self.logit_label = 1
-            self.hr_onset = np.float(self.read_d.dic_patient[name]['death_hour'])
-        else:
-            self.logit_label = 0
-            prior_times = np.max([np.float(i) for i in self.read_d.dic_patient[name]['prior_time_vital']])
-            #self.hr_onset = np.floor(np.random.uniform(0, hr_onset_up, 1))
-            self.hr_onset = prior_times
-
-        for i in range(int(self.hr_onset-self.read_d.predict_window)):
-            self.one_data_tensor = np.zeros((self.read_d.time_sequence, self.vital_length + self.lab_length))
-            self.predict_window_start = i
-            self.read_d.assign_value_vital(self.predict_window_start, name)
-            self.one_data_tensor[:, 0:self.vital_length] = self.read_d.one_data_vital
-            self.read_d.assign_value_lab(self.predict_window_start, name)
-            self.one_data_tensor[:, self.vital_length:self.vital_length + self.lab_length] = self.read_d.one_data_lab
-            one_data = np.mean(self.one_data_tensor, 0)
-            self.predict_risk = self.lr.predict_proba(one_data)
-            self.hour.append(i)
-            self.mortality_risk.append(self.predict_risk)

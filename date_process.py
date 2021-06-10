@@ -25,7 +25,7 @@ class read_data_covid():
         self.dic_vital = json.load(file_vital)
 
         self.time_sequence = 3
-        self.predict_window = 3
+        self.predict_window = 0
 
         self.crucial_lab = ['ALBUMIN', 'ALKPHOS', 'ALT', 'AMYLASE', 'AGAP', 'PTT', 'AST', \
                             'ATYPLYMPH', 'BANDS', 'BASOPHIL_PERC', 'BASOPHIL', 'DBILIRUBIN', \
@@ -106,7 +106,6 @@ class read_data_covid():
         self.lab_length = len(list(self.dic_lab.keys()))
         self.lab_list = list(self.dic_lab.keys())
         self.vital_list = list(self.dic_vital.keys())
-
 
     def return_tensor_data_dynamic(self,name,hr_onset):
         self.one_data_tensor = np.zeros((self.time_sequence, self.vital_length + self.lab_length))
