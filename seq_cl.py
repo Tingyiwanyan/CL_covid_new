@@ -42,6 +42,7 @@ class seq_cl():
         self.tau = 1
         self.latent_dim = 100
         self.layer2_dim = 50
+        self.final_dim = self.layer2_dim
         self.boost_iteration = 10
         self.time_sequence = self.read_d.time_sequence
         self.positive_sample_size = 5
@@ -269,9 +270,9 @@ class seq_cl():
          """
         self.x_origin_cl = tf.expand_dims(self.x_origin,axis=1)
         self.positive_broad = tf.broadcast_to(self.x_origin_cl,
-                                              [self.batch_size, self.positive_sample_size, self.latent_dim])
+                                              [self.batch_size, self.positive_sample_size, self.final_dim])
         self.negative_broad = tf.broadcast_to(self.x_origin_cl,
-                                              [self.batch_size, self.negative_sample_size, self.latent_dim])
+                                              [self.batch_size, self.negative_sample_size, self.final_dim])
 
         self.positive_broad_norm = tf.math.l2_normalize(self.positive_broad, axis=2)
         self.positive_sample_norm = tf.math.l2_normalize(self.x_skip_contrast, axis=2)
