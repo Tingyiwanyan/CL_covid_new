@@ -43,7 +43,7 @@ class seq_cl():
         self.negative_sample_size = 20
 
 
-    def create_memory_bank(self):
+    def create_memory_bank(self,hr_onset):
         self.memory_bank_cohort = np.zeros((self.len_death,self.time_sequence,
                                          self.vital_length + self.lab_length))
         self.memory_bank_control = np.zeros((self.len_live,self.time_sequence,
@@ -51,7 +51,7 @@ class seq_cl():
 
         for i in range(self.len_death):
             name = self.death_data[i]
-            self.read_d.return_tensor_data(name)
+            self.read_d.return_tensor_data_dynamic(name,hr_onset)
             one_data = self.read_d.one_data_tensor
             self.memory_bank_cohort[i, :, :] = one_data
 
@@ -61,7 +61,7 @@ class seq_cl():
             one_data = self.read_d.one_data_tensor
             self.memory_bank_control[i, :, :] = one_data
 
-    def construct_knn_attribute_cohort(self):
+    def construct_knn_attribute_cohort(self,hr_onset):
         """
         construct knn graph at every epoch using attribute information
         """
@@ -73,7 +73,7 @@ class seq_cl():
 
         for i in range(self.len_death):
             name = self.death_data[i]
-            self.read_d.return_tensor_data(name)
+            self.read_d.return_tensor_data_dynamic(name,hr_onset)
             one_data = self.read_d.one_data_tensor
             one_data = np.mean(one_data, 0)
             self.knn_sim_matrix[i, :] = one_data
@@ -108,7 +108,7 @@ class seq_cl():
 
                 index = index + 1
 
-    def construct_knn_attribute_control(self):
+    def construct_knn_attribute_control(self,hr_onset):
         """
         construct knn graph at every epoch using attribute information
         """
@@ -120,7 +120,7 @@ class seq_cl():
 
         for i in range(self.len_live):
             name = self.live_data[i]
-            self.read_d.return_tensor_data(name)
+            self.read_d.return_tensor_data_dynamic(name,hr_onset)
             one_data = self.read_d.one_data_tensor
             one_data = np.mean(one_data, 0)
             self.knn_sim_matrix[i, :] = one_data
@@ -189,9 +189,9 @@ class seq_cl():
 
 
     def config_model(self):
-        self.create_memory_bank()
-        self.construct_knn_attribute_cohort()
-        self.construct_knn_attribute_control()
+        self.create_memory_bank(self.read_d.time_sequence)
+        self.construct_knn_attribute_cohort(self.read_d.time_sequence)
+        self.construct_knn_attribute_control(self.read_d.time_sequence)
         self.LSTM_layers()
         bce = tf.keras.losses.BinaryCrossentropy()
         self.x_origin = self.whole_seq_output[:,self.time_sequence-1,:]
@@ -262,18 +262,18 @@ class seq_cl():
         self.log_normalized_prob = tf.math.negative(tf.reduce_mean(self.normalized_prob_log_k, 0))
 
 
-    def aquire_batch_data(self, starting_index, data_set,length):
+    def aquire_batch_data(self, starting_index, data_set,length,hr_onset):
         self.one_batch_data = np.zeros((length,self.time_sequence,self.vital_length+self.lab_length))
         self.one_batch_logit_dp = np.zeros((length,1))
         for i in range(length):
             name = data_set[starting_index+i]
-            self.read_d.return_tensor_data(name)
+            self.read_d.return_tensor_data_dynamic(name,hr_onset)
             one_data = self.read_d.one_data_tensor
             self.one_batch_logit_dp[i, 0] = self.read_d.logit_label
             self.one_batch_data[i,:,:] = one_data
         self.one_batch_logit = list(self.one_batch_logit_dp[:,0])
 
-    def aquire_batch_data_cl(self,starting_index, data_set,length):
+    def aquire_batch_data_cl(self,starting_index, data_set,length,hr_onset):
         self.one_batch_data = np.zeros((length,self.time_sequence,self.vital_length+self.lab_length))
         self.one_batch_data_pos = np.zeros((length*self.positive_sample_size, self.time_sequence,
              self.vital_length + self.lab_length))
@@ -285,7 +285,7 @@ class seq_cl():
         #self.one_batch_logit_dp[:,0] = self.one_batch_logit
         for i in range(length):
             name = data_set[starting_index + i]
-            self.read_d.return_tensor_data(name)
+            self.read_d.return_tensor_data_dynamic(name,hr_onset)
             one_data = self.read_d.one_data_tensor
             self.one_batch_logit_dp[i, 0] = self.read_d.logit_label
             label = self.read_d.logit_label
@@ -299,7 +299,7 @@ class seq_cl():
         self.one_batch_logit = list(self.one_batch_logit_dp[:, 0])
 
 
-    def aquire_batch_data_cl_attribute(self, starting_index, data_set, length):
+    def aquire_batch_data_cl_attribute(self, starting_index, data_set, length,hr_onset):
         self.one_batch_data = np.zeros(
             (length, self.time_sequence, self.vital_length + self.lab_length))
         self.one_batch_data_pos = np.zeros((length * self.positive_sample_size, self.time_sequence,
@@ -310,7 +310,7 @@ class seq_cl():
         self.one_batch_logit_dp = np.zeros((length, 1))
         for i in range(length):
             name = data_set[starting_index + i]
-            self.read_d.return_tensor_data(name)
+            self.read_d.return_tensor_data_dynamic(name,hr_onset)
             one_data = self.read_d.one_data_tensor
             self.one_batch_logit_dp[i, 0] = self.read_d.logit_label
             label = self.read_d.logit_label
@@ -381,7 +381,7 @@ class seq_cl():
         for i in range(self.epoch_pre):
             for j in range(self.iteration):
                 #print(j)
-                self.aquire_batch_data_cl_attribute(j*self.batch_size, self.train_data, self.batch_size)
+                self.aquire_batch_data_cl_attribute(j*self.batch_size, self.train_data, self.batch_size,self.read_d.time_sequence)
                 self.err_ = self.sess.run([self.log_normalized_prob, self.train_step_cl,self.logit_sig],
                                           feed_dict={self.input_x: self.one_batch_data,
                                                      self.input_y_logit: self.one_batch_logit_dp,
@@ -401,7 +401,7 @@ class seq_cl():
         for i in range(self.epoch):
             for j in range(self.iteration):
                 #print(j)
-                self.aquire_batch_data_cl(j*self.batch_size, self.train_data, self.batch_size)
+                self.aquire_batch_data_cl(j*self.batch_size, self.train_data, self.batch_size,self.read_d.time_sequence)
                 self.err_ = self.sess.run([self.focal_loss, self.train_step_combine_fl,self.logit_sig],
                                           feed_dict={self.input_x: self.one_batch_data,
                                                      self.input_y_logit: self.one_batch_logit_dp,#})
@@ -420,7 +420,7 @@ class seq_cl():
             #self.test()
 
     def test(self):
-        self.aquire_batch_data(0, self.test_data, self.len_test)
+        self.aquire_batch_data(0, self.test_data, self.len_test,self.read_d.time_sequence)
         # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
                                                                   #self.init_hiddenstate: init_hidden_state})
@@ -432,7 +432,7 @@ class seq_cl():
 
 
     def val(self):
-        self.aquire_batch_data(0, self.validate_data, self.len_validate)
+        self.aquire_batch_data(0, self.validate_data, self.len_validate,self.read_d.time_sequence)
         # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
                                                                   #self.init_hiddenstate: init_hidden_state})
