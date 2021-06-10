@@ -180,9 +180,18 @@ class tradition_b():
         self.test_random_forest()
 
     def test_random_forest(self):
-        self.aquire_batch_data(0, self.test_data, len(self.test_data),self.read_d.time_sequence)
-        #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
+        sample_size = np.int(np.floor(self.len_test*4/5))
+        auc = []
+        auprc = []
+        for i in range(self.boost_iteration):
+            test = resample(self.test_data,n_samples=sample_size)
+            self.aquire_batch_data(0, test, len(test),self.read_d.time_sequence)
+            #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
+            auc.append(roc_auc_score(self.one_batch_logit, self.rf.predict_proba(self.one_batch_data)[:,1]))
+            auprc.append(average_precision_score(self.one_batch_logit, self.rf.predict_proba(self.one_batch_data)[:, 1]))
+
+
         print("auc")
-        print(roc_auc_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
+        print(bs.bootstrap(np.array(auc), stat_func=bs_stats.mean))
         print("auprc")
-        print(average_precision_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
+        print(bs.bootstrap(np.array(auprc), stat_func=bs_stats.mean))
