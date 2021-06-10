@@ -40,7 +40,7 @@ class seq_cl():
         self.epoch_pre = 10
         self.gamma = 2
         self.tau = 1
-        self.latent_dim = 100
+        self.latent_dim = 50
         self.layer2_dim = 100
         self.layer3_dim = 50
         self.final_dim = self.latent_dim
