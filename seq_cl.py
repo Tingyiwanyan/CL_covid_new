@@ -195,19 +195,19 @@ class seq_cl():
     def LSTM_layers_stack(self, whole_seq_input, seq_input_pos, seq_input_neg, output_dim):
         lstm = tf.keras.layers.LSTM(output_dim, return_sequences=True, return_state=True)
         whole_seq_input_act = tf.keras.activations.sigmoid(whole_seq_input)
-        whole_seq_output,final_memory_state,final_carry_state = lstm(whole_seq_input_act)
+        whole_seq_output,final_memory_state,final_carry_state = lstm(whole_seq_input)
 
         """
         positive sample
         """
         seq_input_act_pos = tf.keras.activations.relu(seq_input_pos)
-        whole_seq_output_pos, final_memory_state_pos, final_carry_state_pos = lstm(seq_input_act_pos)
+        whole_seq_output_pos, final_memory_state_pos, final_carry_state_pos = lstm(seq_input_pos)
 
         """
         negative sample
         """
         seq_input_act_neg = tf.keras.activations.relu(seq_input_neg)
-        whole_seq_output_neg, final_memory_state_neg, final_carry_state_neg = lstm(seq_input_act_neg)
+        whole_seq_output_neg, final_memory_state_neg, final_carry_state_neg = lstm(seq_input_neg)
 
         return whole_seq_output, whole_seq_output_pos, whole_seq_output_neg
 
