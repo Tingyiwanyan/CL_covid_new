@@ -200,7 +200,7 @@ class tradition_b():
         print("auprc")
         print(bs.bootstrap(np.array(auprc), stat_func=bs_stats.mean))
 
-    def svm(self):
+    def train_svm(self):
         self.aquire_batch_data(0,self.train_data,len(self.train_data),self.read_d.time_sequence)
         self.svm.fit(self.one_batch_data, self.one_batch_logit)
 
@@ -223,7 +223,7 @@ class tradition_b():
         print("auprc")
         print(bs.bootstrap(np.array(auprc), stat_func=bs_stats.mean))
 
-    def xgb(self):
+    def train_xgb(self):
         self.aquire_batch_data(0,self.train_data,len(self.train_data),self.read_d.time_sequence)
         self.xg_model.fit(self.one_batch_data, self.one_batch_logit)
 
