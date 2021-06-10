@@ -199,7 +199,7 @@ class seq_cl():
         #whole_seq_output,final_memory_state,final_carry_state = lstm(whole_seq_input_act)
         dense = tf.keras.layers.Dense(output_dim, activation=tf.nn.relu,
                                       kernel_initializer=tf.keras.initializers.he_normal(seed=None),
-                                      kernel_regularizer=tf.keras.regularizers.l2(0.01),
+                                      kernel_regularizer=tf.keras.regularizers.l1(0.01),
                                       activity_regularizer=tf.keras.regularizers.l2(0.01)
                                       )
         layer = tf.keras.layers.Dropout(.2, input_shape=(output_dim,))
@@ -256,10 +256,12 @@ class seq_cl():
         self.x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
         self.x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
         self.contrastive_learning()
-        self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
+        layer_drop = tf.keras.layers.Dropout(.2, input_shape=(final_dim,))
+        self.x_origin_ = layer_drop(self.x_origin)
+        self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin_,
                                                    units=1,
                                                    kernel_initializer=tf.keras.initializers.he_normal(seed=None),
-                                                   kernel_regularizer=tf.keras.regularizers.l2(0.01),
+                                                   kernel_regularizer=tf.keras.regularizers.l1(0.01),
                                                    activity_regularizer=tf.keras.regularizers.l2(0.01),
                                                    activation=tf.nn.sigmoid)
         self.cross_entropy = bce(self.logit_sig, self.input_y_logit)
