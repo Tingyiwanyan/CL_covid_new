@@ -16,6 +16,8 @@ import numpy as np
 from sklearn.utils import resample
 import bootstrapped.bootstrap as bs
 import bootstrapped.stats_functions as bs_stats
+from sklearn import svm
+from xgboost import XGBClassifier
 
 
 class tradition_b():
@@ -46,6 +48,8 @@ class tradition_b():
 
         self.lr = LogisticRegression(random_state=0)
         self.rf = RandomForestClassifier(max_depth=500,random_state=0)
+        self.svm = svm.SVC()
+        self.xg_model = XGBClassifier()
 
     def aquire_batch_data(self, starting_index, data_set,length, hr_onset):
         self.one_batch_data = np.zeros((length,self.vital_length+self.lab_length))#+self.static_length))
@@ -195,3 +199,51 @@ class tradition_b():
         print(bs.bootstrap(np.array(auc), stat_func=bs_stats.mean))
         print("auprc")
         print(bs.bootstrap(np.array(auprc), stat_func=bs_stats.mean))
+
+    def svm(self):
+        self.aquire_batch_data(0,self.train_data,len(self.train_data),self.read_d.time_sequence)
+        self.svm.fit(self.one_batch_data, self.one_batch_logit)
+
+        self.test_svm()
+
+    def test_svm(self):
+        sample_size = np.int(np.floor(self.len_test * 4 / 5))
+        auc = []
+        auprc = []
+        for i in range(self.boost_iteration):
+            test = resample(self.test_data, n_samples=sample_size)
+            self.aquire_batch_data(0, test, len(test), self.read_d.time_sequence)
+            # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
+            auc.append(roc_auc_score(self.one_batch_logit, self.svm.predict_proba(self.one_batch_data)[:, 1]))
+            auprc.append(
+                average_precision_score(self.one_batch_logit, self.svm.predict_proba(self.one_batch_data)[:, 1]))
+
+        print("auc")
+        print(bs.bootstrap(np.array(auc), stat_func=bs_stats.mean))
+        print("auprc")
+        print(bs.bootstrap(np.array(auprc), stat_func=bs_stats.mean))
+
+    def xgb(self):
+        self.aquire_batch_data(0,self.train_data,len(self.train_data),self.read_d.time_sequence)
+        self.xg_model.fit(self.one_batch_data, self.one_batch_logit)
+
+        self.test_xgb()
+
+    def test_xgb(self):
+        sample_size = np.int(np.floor(self.len_test * 4 / 5))
+        auc = []
+        auprc = []
+        for i in range(self.boost_iteration):
+            test = resample(self.test_data, n_samples=sample_size)
+            self.aquire_batch_data(0, test, len(test), self.read_d.time_sequence)
+            # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
+            auc.append(roc_auc_score(self.one_batch_logit, self.xg_model.predict_proba(self.one_batch_data)[:, 1]))
+            auprc.append(
+                average_precision_score(self.one_batch_logit, self.xg_model.predict_proba(self.one_batch_data)[:, 1]))
+
+        print("auc")
+        print(bs.bootstrap(np.array(auc), stat_func=bs_stats.mean))
+        print("auprc")
+        print(bs.bootstrap(np.array(auprc), stat_func=bs_stats.mean))
+
+
