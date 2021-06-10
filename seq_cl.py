@@ -203,9 +203,11 @@ class seq_cl():
                                       activity_regularizer=tf.keras.regularizers.l2(0.01)
                                       )
         layer = tf.keras.layers.Dropout(.2, input_shape=(output_dim,))
+        BN = tf.keras.layers.BatchNormalization()
 
         whole_seq_output_ = dense(whole_seq_input)
-        whole_seq_output_act = layer(whole_seq_output_)
+        whole_seq_output_bn = BN(whole_seq_output_)
+        whole_seq_output_act = layer(whole_seq_output_bn)
 
         whole_seq_output, final_memory_state, final_carry_state = lstm(whole_seq_output_act)
 
@@ -213,14 +215,16 @@ class seq_cl():
         positive sample
         """
         whole_seq_output_pos_ = dense(seq_input_pos)
-        whole_seq_output_pos_act = layer(whole_seq_output_pos_)
+        whole_seq_output_pos_bn = BN(whole_seq_output_pos_)
+        whole_seq_output_pos_act = layer(whole_seq_output_pos_bn)
         whole_seq_output_pos, final_memory_state_pos, final_carry_state_pos = lstm(whole_seq_output_pos_act)
 
         """
         negative sample
         """
         whole_seq_output_neg_= dense(seq_input_neg)
-        whole_seq_output_neg_act = layer(whole_seq_output_neg_)
+        whole_seq_output_neg_bn = BN(whole_seq_output_neg_)
+        whole_seq_output_neg_act = layer(whole_seq_output_neg_bn)
         whole_seq_output_neg, final_memory_state_neg, final_carry_state_neg = lstm(whole_seq_output_neg_act)
 
         return whole_seq_output, whole_seq_output_pos, whole_seq_output_neg
@@ -256,9 +260,8 @@ class seq_cl():
         self.x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
         self.x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
         self.contrastive_learning()
-        layer_drop = tf.keras.layers.Dropout(.2, input_shape=(self.final_dim,))
-        self.x_origin_ = layer_drop(self.x_origin)
-        self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin_,
+
+        self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
                                                    units=1,
                                                    kernel_initializer=tf.keras.initializers.he_normal(seed=None),
                                                    kernel_regularizer=tf.keras.regularizers.l1(0.01),
