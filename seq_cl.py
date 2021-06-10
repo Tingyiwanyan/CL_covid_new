@@ -10,6 +10,8 @@ from sklearn.metrics import average_precision_score
 from sklearn.neighbors import NearestNeighbors
 import tensorflow as tf
 import numpy as np
+import bootstrapped.bootstrap as bs
+import bootstrapped.stats_functions as bs_stats
 
 class seq_cl():
     """
@@ -420,15 +422,21 @@ class seq_cl():
             #self.test()
 
     def test(self):
-        self.aquire_batch_data(0, self.test_data, self.len_test,self.read_d.time_sequence)
+        sample_size = np.int(np.floor(self.len_test * 4 / 5))
+        auc = []
+        auprc = []
+        for i in range(self.boost_iteration):
+            test = resample(self.test_data, n_samples=sample_size)
+            self.aquire_batch_data(0, test, len(test),self.read_d.time_sequence)
         # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
-        self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
-                                                                  #self.init_hiddenstate: init_hidden_state})
-                                                                  #self.input_x_static: self.one_batch_data_static})
+            self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
+            auc.append(roc_auc_score(self.one_batch_logit, self.out_logit))
+            auprc.append(
+                average_precision_score(self.one_batch_logit, self.out_logit))
         print("auc")
-        print(roc_auc_score(self.one_batch_logit, self.out_logit))
+        print(bs.bootstrap(np.array(auc), stat_func=bs_stats.mean))
         print("auprc")
-        print(average_precision_score(self.one_batch_logit, self.out_logit))
+        print(bs.bootstrap(np.array(auprc), stat_func=bs_stats.mean))
 
 
     def val(self):
