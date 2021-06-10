@@ -40,7 +40,7 @@ class tradition_b():
         self.batch_size = 64
 
         self.lr = LogisticRegression(random_state=0)
-        self.rf = RandomForestClassifier(max_depth=100,random_state=0)
+        self.rf = RandomForestClassifier(max_depth=500,random_state=0)
 
     def aquire_batch_data(self, starting_index, data_set,length, hr_onset):
         self.one_batch_data = np.zeros((length,self.vital_length+self.lab_length))#+self.static_length))
