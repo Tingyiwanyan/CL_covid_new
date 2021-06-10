@@ -11,6 +11,8 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.utils import resample
 import tensorflow as tf
 import numpy as np
+from keras.layers.core import Dropout
+from keras import regularizers
 import bootstrapped.bootstrap as bs
 import bootstrapped.stats_functions as bs_stats
 
@@ -41,9 +43,9 @@ class seq_cl():
         self.gamma = 2
         self.tau = 1
         self.latent_dim = 50
-        self.layer2_dim = 100
+        self.layer2_dim = 50
         self.layer3_dim = 50
-        self.final_dim = self.latent_dim
+        self.final_dim = self.layer2_dim
         self.boost_iteration = 10
         self.time_sequence = self.read_d.time_sequence
         self.positive_sample_size = 5
@@ -195,20 +197,26 @@ class seq_cl():
 
     def LSTM_layers_stack(self, whole_seq_input, seq_input_pos, seq_input_neg, output_dim):
         lstm = tf.keras.layers.LSTM(output_dim, return_sequences=True, return_state=True)
-        whole_seq_input_act = tf.keras.activations.sigmoid(whole_seq_input)
-        whole_seq_output,final_memory_state,final_carry_state = lstm(whole_seq_input)
+
+        #whole_seq_output,final_memory_state,final_carry_state = lstm(whole_seq_input_act)
+        dense = tf.keras.layers.Dense(output_dim, activation=tf.nn.relu,
+                                      kernal_initializer=tf.keras.initializers.he_normal(seed=None),
+                                      kernel_regularizer=regularizers.l2(0.01)
+                                      )
+        whole_seq_output_act, final_memory_state_act, final_carry_state_act = dense(whole_seq_input)
+        whole_seq_output, final_memory_state, final_carry_state = lstm(whole_seq_output_act)
 
         """
         positive sample
         """
-        seq_input_act_pos = tf.keras.activations.relu(seq_input_pos)
-        whole_seq_output_pos, final_memory_state_pos, final_carry_state_pos = lstm(seq_input_pos)
+        whole_seq_output_pos_act, final_memory_state_pos_act, final_carry_state_pos_act = dense(seq_input_pos)
+        whole_seq_output_pos, final_memory_state_pos, final_carry_state_pos = lstm(whole_seq_output_pos_act)
 
         """
         negative sample
         """
-        seq_input_act_neg = tf.keras.activations.relu(seq_input_neg)
-        whole_seq_output_neg, final_memory_state_neg, final_carry_state_neg = lstm(seq_input_neg)
+        whole_seq_output_neg_act, final_memory_state_neg_act, final_carry_state_neg_act = dense(seq_input_neg)
+        whole_seq_output_neg, final_memory_state_neg, final_carry_state_neg = lstm(whole_seq_output_neg_act)
 
         return whole_seq_output, whole_seq_output_pos, whole_seq_output_neg
 
@@ -221,13 +229,13 @@ class seq_cl():
         """
         LSTM stack layers
         """
-        """
-        whole_seq_output1,whole_seq_output_pos1,whole_seq_output_neg1 = \
+
+        whole_seq_output,whole_seq_output_pos,whole_seq_output_neg = \
             self.LSTM_layers_stack(self.whole_seq_output,
                                    self.whole_seq_output_pos,self.whole_seq_output_neg,self.layer2_dim)
-        whole_seq_output, whole_seq_output_pos, whole_seq_output_neg = \
-            self.LSTM_layers_stack(whole_seq_output1,
-                                   whole_seq_output_pos1, whole_seq_output_neg1, self.layer3_dim)
+        #whole_seq_output, whole_seq_output_pos, whole_seq_output_neg = \
+            #self.LSTM_layers_stack(whole_seq_output1,
+                                   #whole_seq_output_pos1, whole_seq_output_neg1, self.layer3_dim)
         
         self.whole_seq_out_pos_reshape = tf.reshape(whole_seq_output_pos, [self.batch_size,
                                                                                 self.positive_sample_size,
@@ -237,9 +245,9 @@ class seq_cl():
                                                                                 self.negative_sample_size,
                                                                                 self.time_sequence,
                                                                                 self.final_dim])
-        """
+
         bce = tf.keras.losses.BinaryCrossentropy()
-        self.x_origin = self.whole_seq_output[:,self.time_sequence-1,:]
+        self.x_origin = whole_seq_output[:,self.time_sequence-1,:]
         self.x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
         self.x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
         self.contrastive_learning()
