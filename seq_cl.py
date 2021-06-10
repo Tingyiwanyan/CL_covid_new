@@ -231,11 +231,11 @@ class seq_cl():
         self.whole_seq_out_pos_reshape = tf.reshape(whole_seq_output_pos, [self.batch_size,
                                                                                 self.positive_sample_size,
                                                                                 self.time_sequence,
-                                                                                self.layer2_dim])
+                                                                                self.final_dim])
         self.whole_seq_out_neg_reshape = tf.reshape(whole_seq_output_neg, [self.batch_size,
                                                                                 self.negative_sample_size,
                                                                                 self.time_sequence,
-                                                                                self.layer2_dim])
+                                                                                self.final_dim])
 
         bce = tf.keras.losses.BinaryCrossentropy()
         self.x_origin = whole_seq_output[:,self.time_sequence-1,:]
