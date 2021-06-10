@@ -191,8 +191,8 @@ class tradition_b():
             test = resample(self.test_data,n_samples=sample_size)
             self.aquire_batch_data(0, test, len(test),self.read_d.time_sequence)
             #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
-            auc.append(roc_auc_score(self.one_batch_logit, self.rf.predict_proba(self.one_batch_data)[:,1]))
-            auprc.append(average_precision_score(self.one_batch_logit, self.rf.predict_proba(self.one_batch_data)[:, 1]))
+            auc.append(roc_auc_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
+            auprc.append(average_precision_score(self.one_batch_logit, self.rf.predict(self.one_batch_data)))
 
 
         print("auc")
@@ -214,9 +214,9 @@ class tradition_b():
             test = resample(self.test_data, n_samples=sample_size)
             self.aquire_batch_data(0, test, len(test), self.read_d.time_sequence)
             # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
-            auc.append(roc_auc_score(self.one_batch_logit, self.svm.predict_proba(self.one_batch_data)[:, 1]))
+            auc.append(roc_auc_score(self.one_batch_logit, self.svm.predict(self.one_batch_data)))
             auprc.append(
-                average_precision_score(self.one_batch_logit, self.svm.predict_proba(self.one_batch_data)[:, 1]))
+                average_precision_score(self.one_batch_logit, self.svm.predict(self.one_batch_data)))
 
         print("auc")
         print(bs.bootstrap(np.array(auc), stat_func=bs_stats.mean))
@@ -237,9 +237,9 @@ class tradition_b():
             test = resample(self.test_data, n_samples=sample_size)
             self.aquire_batch_data(0, test, len(test), self.read_d.time_sequence)
             # print(self.lr.score(self.one_batch_data,self.one_batch_logit))
-            auc.append(roc_auc_score(self.one_batch_logit, self.xg_model.predict_proba(self.one_batch_data)[:, 1]))
+            auc.append(roc_auc_score(self.one_batch_logit, self.xg_model.predict(self.one_batch_data)))
             auprc.append(
-                average_precision_score(self.one_batch_logit, self.xg_model.predict_proba(self.one_batch_data)[:, 1]))
+                average_precision_score(self.one_batch_logit, self.xg_model.predict(self.one_batch_data)))
 
         print("auc")
         print(bs.bootstrap(np.array(auc), stat_func=bs_stats.mean))
