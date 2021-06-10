@@ -41,6 +41,7 @@ class seq_cl():
         self.gamma = 2
         self.tau = 1
         self.latent_dim = 100
+        self.layer2_dim = 50
         self.boost_iteration = 10
         self.time_sequence = self.read_d.time_sequence
         self.positive_sample_size = 5
@@ -190,14 +191,49 @@ class seq_cl():
                                                                                 self.time_sequence,
                                                                                 self.latent_dim])
 
+    def LSTM_layers_stack(self, whole_seq_input, seq_input_pos, seq_input_neg, output_dim):
+        lstm = tf.keras.layers.LSTM(output_dim, return_sequences=True, return_state=True)
+        whole_seq_input_act = tf.keras.activations.relu(whole_seq_input)
+        whole_seq_output,final_memory_state,final_carry_state = lstm(whole_seq_input_act)
+
+        """
+        positive sample
+        """
+        seq_input_act_pos = tf.keras.activations.relu(seq_input_pos)
+        whole_seq_output_pos, final_memory_state_pos, final_carry_state_pos = lstm(seq_input_act_pos)
+
+        """
+        negative sample
+        """
+        seq_input_act_neg = tf.keras.activations.relu(seq_input_neg)
+        whole_seq_output_neg, final_memory_state_neg, final_carry_state_neg = lstm(seq_input_act_neg)
+
+        return whole_seq_output, whole_seq_output_pos, whole_seq_output_neg
+
 
     def config_model(self):
         self.create_memory_bank(self.read_d.time_sequence)
         self.construct_knn_attribute_cohort(self.read_d.time_sequence)
         self.construct_knn_attribute_control(self.read_d.time_sequence)
         self.LSTM_layers()
+        """
+        LSTM stack layers
+        """
+        whole_seq_output,whole_seq_output_pos,whole_seq_output_neg = \
+            self.LSTM_layers_stack(self.whole_seq_output,
+                                   self.whole_seq_output_pos,self.whole_seq_output_neg,self.layer2_dim)
+
+        self.whole_seq_out_pos_reshape = tf.reshape(whole_seq_output_pos, [self.batch_size,
+                                                                                self.positive_sample_size,
+                                                                                self.time_sequence,
+                                                                                self.latent_dim])
+        self.whole_seq_out_neg_reshape = tf.reshape(whole_seq_output_neg, [self.batch_size,
+                                                                                self.negative_sample_size,
+                                                                                self.time_sequence,
+                                                                                self.latent_dim])
+
         bce = tf.keras.losses.BinaryCrossentropy()
-        self.x_origin = self.whole_seq_output[:,self.time_sequence-1,:]
+        self.x_origin = whole_seq_output[:,self.time_sequence-1,:]
         self.x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
         self.x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
         self.contrastive_learning()
