@@ -256,7 +256,7 @@ class seq_cl():
         self.x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
         self.x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
         self.contrastive_learning()
-        layer_drop = tf.keras.layers.Dropout(.2, input_shape=(final_dim,))
+        layer_drop = tf.keras.layers.Dropout(.2, input_shape=(self.final_dim,))
         self.x_origin_ = layer_drop(self.x_origin)
         self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin_,
                                                    units=1,
