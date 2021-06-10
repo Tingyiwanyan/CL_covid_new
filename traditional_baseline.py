@@ -48,7 +48,7 @@ class tradition_b():
 
         self.lr = LogisticRegression(random_state=0)
         self.rf = RandomForestClassifier(max_depth=500,random_state=0)
-        self.svm = svm.SVC()
+        self.svm = svm.SVC(probability=True)
         self.xg_model = XGBClassifier()
 
     def aquire_batch_data(self, starting_index, data_set,length, hr_onset):
