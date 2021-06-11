@@ -13,7 +13,7 @@ import tensorflow as tf
 import numpy as np
 import bootstrapped.bootstrap as bs
 import bootstrapped.stats_functions as bs_stats
-import tensorflow_lattice as tfl
+from sklearn.calibration import CalibratedClassifierCV
 
 class seq_cl():
     """
@@ -359,13 +359,12 @@ class seq_cl():
         #self.x_negative_contrast = self.calibrate_layer(x_negative_contrast)
         self.contrastive_learning()
 
-        logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
+        self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
                                                    units=1,
                                                    kernel_initializer=tf.keras.initializers.he_normal(seed=None),
                                                    kernel_regularizer=tf.keras.regularizers.l1(0.01),
                                                    activity_regularizer=tf.keras.regularizers.l2(0.01),
                                                    activation=tf.nn.sigmoid)
-        self.logit_sig = self.calibrate_layer(logit_sig)
         self.cross_entropy = bce(self.logit_sig, self.input_y_logit)
         self.train_step_ce = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.cross_entropy)
         self.train_step_cl = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.log_normalized_prob)
