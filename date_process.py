@@ -24,7 +24,7 @@ class read_data_covid():
         self.dic_patient = json.load(file_patient)
         self.dic_lab = json.load(file_lab)
         self.dic_vital = json.load(file_vital)
-        self.dic_p = json.load(file_patient)
+        self.dic_p = self.dic_patient
 
         self.time_sequence = 6
         self.predict_window = 0
