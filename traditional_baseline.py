@@ -32,6 +32,8 @@ class tradition_b():
         self.train_data = all_data[0:3405]
         self.death_data = self.read_d.death_data
         self.train_death = [i for i in self.train_data if i in self.death_data]
+        self.train_death = self.train_death[0:30]
+        self.train_data = [i for i in self.train_data if i in self.train_death]
         #self.train_data = all_data[0:945]
         self.validate_data = all_data[3405:3891]
         self.test_data = all_data[3891:]
