@@ -7,8 +7,8 @@ class calibrate():
         self.test_data = all_data[3891:]
         self.len_test = len(self.test_data)
         self.seq_cl = seq_cl
-        self.input = np.zeros((3, 4))
-        self.y = [0,1,0]
+        self.input = np.zeros((400, 4))
+        self.y = np.zeros(400)
 
     def fit(self, x, y):
         self.classes_ = np.unique(y)
