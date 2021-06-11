@@ -82,8 +82,8 @@ class seq_cl():
             self.one_data_death[i,:] = one_data[0,:]
             #one_data = np.mean(one_data, 0)
 
-        self.knn_sim_matrix = self.sess.run(self.one_data_death,
-                                  feed_dict={self.input_x: self.one_batch_data})
+        self.knn_sim_matrix = self.sess.run(self.x_origin,
+                                  feed_dict={self.input_x: self.one_data_death})
 
         # self.norm_knn = np.expand_dims(np.linalg.norm(self.knn_sim_matrix, axis=1), 1)
         # self.knn_sim_matrix = self.knn_sim_matrix / self.norm_knn
@@ -126,11 +126,11 @@ class seq_cl():
             name = self.live_data[i]
             self.read_d.return_tensor_data_dynamic(name, hr_onset)
             one_data = self.read_d.one_data_tensor
-            self.one_data_death[i,:] = one_data[0,:]
+            self.one_data_live[i,:] = one_data[0,:]
             #one_data = np.mean(one_data, 0)
 
-        self.knn_sim_matrix = self.sess.run(self.one_data_live,
-                                  feed_dict={self.input_x: self.one_batch_data})
+        self.knn_sim_matrix = self.sess.run(self.x_origin,
+                                  feed_dict={self.input_x: self.one_data_live})
 
         # self.norm_knn = np.expand_dims(np.linalg.norm(self.knn_sim_matrix, axis=1), 1)
         # self.knn_sim_matrix = self.knn_sim_matrix / self.norm_knn
