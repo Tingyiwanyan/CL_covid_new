@@ -22,7 +22,8 @@ class seq_cl():
     def __init__(self, read_d):
         self.read_d = read_d
         all_data = list(self.read_d.dic_patient.keys())
-        self.train_data = all_data[0:3405]
+        #self.train_data = all_data[0:3405]
+        self.train_data = all_data[0:345]
         self.validate_data = all_data[3405:3891]
         self.test_data = all_data[3891:]
         self.death_data = self.read_d.death_data
@@ -362,7 +363,7 @@ class seq_cl():
         #self.x_negative_contrast = self.calibrate_layer(x_negative_contrast)
         self.contrastive_learning()
 
-        self.logit_sig_ = tf.compat.v1.layers.dense(inputs=self.x_origin,
+        self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
                                                    units=1,
                                                    kernel_initializer=tf.keras.initializers.he_normal(seed=None),
                                                    kernel_regularizer=tf.keras.regularizers.l1(0.01),
@@ -370,7 +371,7 @@ class seq_cl():
                                                    activation=tf.nn.sigmoid)
         #self.A_broad = tf.broadcast_to(self.A,
                                               #[self.batch_size, self.negative_sample_size, self.final_dim])
-        self.logit_sig = tf.math.sigmoid(tf.math.negative(tf.math.add(tf.math.multiply(self.A,self.logit_sig_),self.B)))
+        #self.logit_sig = tf.math.sigmoid(tf.math.negative(tf.math.add(tf.math.multiply(self.A,self.logit_sig_),self.B)))
         self.cross_entropy = bce(self.logit_sig, self.input_y_logit)
         self.train_step_ce = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.cross_entropy)
         self.train_step_cl = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.log_normalized_prob)
