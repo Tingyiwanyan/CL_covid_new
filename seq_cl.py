@@ -23,7 +23,7 @@ class seq_cl():
         self.read_d = read_d
         all_data = list(self.read_d.dic_patient.keys())
         #self.train_data = all_data[0:3405]
-        self.train_data = all_data[0:945]
+        self.train_data = all_data[0:1945]
         self.validate_data = all_data[3405:3891]
         self.test_data = all_data[3891:]
         self.death_data = self.read_d.death_data
