@@ -329,7 +329,6 @@ class seq_cl():
         self.construct_knn_attribute_cohort(self.read_d.time_sequence)
         self.construct_knn_attribute_control(self.read_d.time_sequence)
         self.LSTM_layers()
-        self.calibrate_layer = tfl.layers.CategoricalCalibration(2,output_min=0.0, output_max=1.0)
         """
         LSTM stack layers
         """
