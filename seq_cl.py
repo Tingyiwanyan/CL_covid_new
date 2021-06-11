@@ -612,7 +612,7 @@ class seq_cl():
             print("epoch")
             print(i)
             auc = self.val()
-            self.acc.appennd(auc)
+            self.acc.append(auc)
 
             #print(self.err_[0])
             #auc = roc_auc_score(self.one_batch_logit, self.err_[2])
