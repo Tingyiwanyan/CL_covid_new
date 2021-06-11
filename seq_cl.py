@@ -13,6 +13,7 @@ import tensorflow as tf
 import numpy as np
 import bootstrapped.bootstrap as bs
 import bootstrapped.stats_functions as bs_stats
+import tennsorflow_lattice as tfl
 
 class seq_cl():
     """
@@ -328,6 +329,7 @@ class seq_cl():
         self.construct_knn_attribute_cohort(self.read_d.time_sequence)
         self.construct_knn_attribute_control(self.read_d.time_sequence)
         self.LSTM_layers()
+        self.calibrate_layer = tfl.layers.CategoricalCalibration(2,output_min=0.0, output_max=1.0)
         """
         LSTM stack layers
         """
@@ -349,9 +351,12 @@ class seq_cl():
                                                                                 self.final_dim])
 
         bce = tf.keras.losses.BinaryCrossentropy()
-        self.x_origin = whole_seq_output[:,self.time_sequence-1,:]
-        self.x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
-        self.x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
+        x_origin = whole_seq_output[:,self.time_sequence-1,:]
+        self.x_origin = self.calibrate_layer(x_origin)
+        x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
+        self.x_skip_contrast = self.calibrate_layer(x_skip_contrast)
+        x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
+        self.x_negative_contrast = self.calibrate_layer(x_negative_contrast)
         self.contrastive_learning()
 
         self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
