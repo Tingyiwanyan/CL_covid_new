@@ -35,7 +35,7 @@ class tradition_b():
         self.live_data = self.read_d.live_data
         self.train_death = [i for i in self.train_data if i in self.death_data]
         self.train_live = [i for i in self.train_data if i in self.live_data]
-        self.train_death = self.train_death[0:400]
+        self.train_death = self.train_death[0:600]
         self.train_data = self.train_live + self.train_death
         random.shuffle(self.train_data)
         #self.train_data = all_data[0:945]
