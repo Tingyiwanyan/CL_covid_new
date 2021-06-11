@@ -526,15 +526,15 @@ class seq_cl():
             np.zeros((self.negative_sample_size, self.time_sequence,
                       self.vital_length + self.lab_length))
         if label == 1:
-            #index_neighbor = \
-                #np.floor(np.random.uniform(0, self.len_live, self.negative_sample_size)).astype(int)
-            #self.patient_neg_sample_tensor = self.memory_bank_control[index_neighbor,:,:]
-            self.patient_neg_sample_tensor = self.memory_bank_control[0:self.negative_sample_size, :, :]
+            index_neighbor = \
+                np.floor(np.random.uniform(0, self.len_live, self.negative_sample_size)).astype(int)
+            self.patient_neg_sample_tensor = self.memory_bank_control[index_neighbor,:,:]
+            #self.patient_neg_sample_tensor = self.memory_bank_control[0:self.negative_sample_size, :, :]
         else:
-            #index_neighbor = \
-                #np.floor(np.random.uniform(0, self.len_death, self.negative_sample_size)).astype(int)
-            #self.patient_neg_sample_tensor = self.memory_bank_cohort[index_neighbor,:,:]
-            self.patient_neg_sample_tensor = self.memory_bank_cohort[0:self.negative_sample_size, :, :]
+            index_neighbor = \
+                np.floor(np.random.uniform(0, self.len_death, self.negative_sample_size)).astype(int)
+            self.patient_neg_sample_tensor = self.memory_bank_cohort[index_neighbor,:,:]
+            #self.patient_neg_sample_tensor = self.memory_bank_cohort[0:self.negative_sample_size, :, :]
 
     def aquire_pos_data_feature(self,label,name):
         #print("im in pos")
