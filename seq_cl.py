@@ -27,12 +27,12 @@ class seq_cl():
         #self.train_data = all_data[0:345]
         self.death_data = self.read_d.death_data
         self.live_data = self.read_d.live_data
-        self.train_death = [i for i in self.train_data if i in self.death_data]
-        self.train_death = self.train_death[0:30]
-        self.train_live = [i for i in self.train_data if i in self.live_data]
-        self.train_death = self.train_death[0:30]
-        self.train_data = self.train_live + self.train_death
-        random.shuffle(self.train_data)
+        #self.train_death = [i for i in self.train_data if i in self.death_data]
+        #self.train_death = self.train_death[0:30]
+        #self.train_live = [i for i in self.train_data if i in self.live_data]
+        #self.train_death = self.train_death[0:30]
+        #self.train_data = self.train_live + self.train_death
+        #random.shuffle(self.train_data)
 
         self.validate_data = all_data[3405:3891]
         self.test_data = all_data[3891:]
@@ -46,7 +46,7 @@ class seq_cl():
         self.batch_size = 64
         self.vital_length = self.read_d.vital_length
         self.lab_length = self.read_d.lab_length
-        self.epoch = 10
+        self.epoch = 15
         self.epoch_pre = 10
         self.gamma = 2
         self.tau = 1
@@ -611,7 +611,8 @@ class seq_cl():
                                                      self.input_x_neg:self.one_batch_data_neg})
             print("epoch")
             print(i)
-            self.val()
+            auc = self.val()
+            self.acc.appennd(auc)
 
             #print(self.err_[0])
             #auc = roc_auc_score(self.one_batch_logit, self.err_[2])
@@ -689,6 +690,7 @@ class seq_cl():
         print(roc_auc_score(self.one_batch_logit, self.out_logit))
         print("auprc")
         print(average_precision_score(self.one_batch_logit, self.out_logit))
+        return roc_auc_score(self.one_batch_logit, self.out_logit)
 
     def real_time_prediction(self,name):
         self.hour = []

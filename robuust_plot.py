@@ -21,7 +21,7 @@ FL_feature = [0.766,0.786,0.812,0.815,0.820]
 
 FL_ATT = [0.774,0.803,0.815,0.827,0.830]
 
-plt.xlabel("Traing Size")
+plt.xlabel("Traing Data Size")
 plt.ylabel("AUC")
 plt.title("Prediction Performance", fontsize=14)
 plt.xlim(300, 3500)

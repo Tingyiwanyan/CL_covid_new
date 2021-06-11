@@ -11,7 +11,7 @@ train_svm = [0.596,0.609,0.663,0.696,0.721]
 
 train_xgb = [0.670,0.689,0.679,0.721,0.740]
 
-CE=[0.668, 0.672,0.694,0.701,0.710]
+CE=[0.631, 0.642,0.666,0.678,0.710]
 
 FL=[0.656,0.671,0.683,0.723,0.756]
 
@@ -21,7 +21,7 @@ FL_feature = [0.813,0.817,0.818,0.819,0.823]
 
 FL_ATT = [0.815,0.820,0.825,0.827,0.833]
 
-plt.xlabel("Traing Size")
+plt.xlabel("Training Set Positive Label Percentage")
 plt.ylabel("AUC")
 plt.title("Prediction Performance", fontsize=14)
 plt.xlim(0,21)
