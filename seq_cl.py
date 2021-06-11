@@ -46,7 +46,7 @@ class seq_cl():
         self.batch_size = 64
         self.vital_length = self.read_d.vital_length
         self.lab_length = self.read_d.lab_length
-        self.epoch = 15
+        self.epoch = 5
         self.epoch_pre = 10
         self.gamma = 2
         self.tau = 1
@@ -609,10 +609,11 @@ class seq_cl():
                                                      self.input_y_logit: self.one_batch_logit_dp,#})
                                                      self.input_x_pos:self.one_batch_data_pos,
                                                      self.input_x_neg:self.one_batch_data_neg})
-            print("epoch")
-            print(i)
-            auc = self.val()
-            self.acc.append(auc)
+            #print("epoch")
+            #print(i)
+                if j%5 == 0:
+                    auc = self.val()
+                    self.acc.append(auc)
 
             #print(self.err_[0])
             #auc = roc_auc_score(self.one_batch_logit, self.err_[2])
