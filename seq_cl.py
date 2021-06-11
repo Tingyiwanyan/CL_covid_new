@@ -24,6 +24,8 @@ class seq_cl():
         all_data = list(self.read_d.dic_patient.keys())
         self.train_data = all_data[0:3405]
         #self.train_data = all_data[0:345]
+        self.death_data = self.read_d.death_data
+        self.live_data = self.read_d.live_data
         self.train_death = [i for i in self.train_data if i in self.death_data]
         self.validate_data = all_data[3405:3891]
         self.test_data = all_data[3891:]

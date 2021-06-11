@@ -30,6 +30,7 @@ class tradition_b():
         self.read_d = read_d
         all_data = list(self.read_d.dic_patient.keys())
         self.train_data = all_data[0:3405]
+        self.death_data = self.read_d.death_data
         self.train_death = [i for i in self.train_data if i in self.death_data]
         #self.train_data = all_data[0:945]
         self.validate_data = all_data[3405:3891]
