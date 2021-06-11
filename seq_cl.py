@@ -47,7 +47,7 @@ class seq_cl():
         self.boost_iteration = 10
         self.time_sequence = self.read_d.time_sequence
         self.positive_sample_size = 5
-        self.negative_sample_size = 20
+        self.negative_sample_size = self.batch_size
 
 
     def create_memory_bank(self,hr_onset):
@@ -67,6 +67,100 @@ class seq_cl():
             self.read_d.return_tensor_data(name)
             one_data = self.read_d.one_data_tensor
             self.memory_bank_control[i, :, :] = one_data
+
+    def construct_knn_feature_cohort(self,hr_onset):
+        print("Im here in constructing feature graph")
+        self.knn_sim_matrix = np.zeros((self.len_death,
+                                        self.final_dim))
+        self.knn_neighbor_feature = {}
+
+        self.one_data_death = np.zeros((self.len_death,self.final_dim))
+        for i in range(self.len_death):
+            name = self.death_data[i]
+            self.read_d.return_tensor_data_dynamic(name, hr_onset)
+            one_data = self.read_d.one_data_tensor
+            self.one_data_death[i,:] = one_data[0,:]
+            #one_data = np.mean(one_data, 0)
+
+        self.knn_sim_matrix = self.sess.run(self.one_data_death,
+                                  feed_dict={self.input_x: self.one_batch_data})
+
+        # self.norm_knn = np.expand_dims(np.linalg.norm(self.knn_sim_matrix, axis=1), 1)
+        # self.knn_sim_matrix = self.knn_sim_matrix / self.norm_knn
+        # self.knn_sim_score_matrix = np.matmul(self.knn_sim_matrix[:,0:8], self.knn_sim_matrix[:,0:8].T)
+        self.knn_nbrs = NearestNeighbors(n_neighbors=self.len_death, algorithm='auto',metric='cosine').fit(
+            self.knn_sim_matrix[:, :])
+        distance, indices = self.knn_nbrs.kneighbors(self.knn_sim_matrix[:, :])
+        for i in range(self.len_death):
+            # print(i)
+            # vec = np.argsort(self.knn_sim_score_matrix[i, :])
+            # vec = vec[::-1]
+            self.vec = indices
+            # center_patient_id = self.train_data_cohort_mem[i]
+            center_patient_id = i
+            center_patient_id_name = self.death_data[i]
+            index = 0
+            for j in range(self.len_death):
+                if index == self.positive_sample_size:
+                    break
+                # compare_patient_id = self.train_data_cohort_mem[self.vec[i, j]]
+                compare_patient_id = self.vec[i, j]
+                if compare_patient_id == center_patient_id:
+                    continue
+                if center_patient_id_name not in self.knn_neighbor_feature.keys():
+                    self.knn_neighbor_feature[center_patient_id_name] = {}
+                    self.knn_neighbor_feature[center_patient_id_name].setdefault('knn_neighbor', []).append(compare_patient_id)
+                else:
+                    self.knn_neighbor_feature[center_patient_id_name].setdefault('knn_neighbor', []).append(compare_patient_id)
+
+                index = index + 1
+
+    def construct_knn_feature_control(self,hr_onset):
+        print("Im here in constructing feature graph")
+        self.knn_sim_matrix = np.zeros((self.len_live,
+                                        self.final_dim))
+        self.knn_neighbor_control_feature = {}
+
+        self.one_data_live = np.zeros((self.len_live,self.final_dim))
+        for i in range(self.len_live):
+            name = self.live_data[i]
+            self.read_d.return_tensor_data_dynamic(name, hr_onset)
+            one_data = self.read_d.one_data_tensor
+            self.one_data_death[i,:] = one_data[0,:]
+            #one_data = np.mean(one_data, 0)
+
+        self.knn_sim_matrix = self.sess.run(self.one_data_live,
+                                  feed_dict={self.input_x: self.one_batch_data})
+
+        # self.norm_knn = np.expand_dims(np.linalg.norm(self.knn_sim_matrix, axis=1), 1)
+        # self.knn_sim_matrix = self.knn_sim_matrix / self.norm_knn
+        # self.knn_sim_score_matrix = np.matmul(self.knn_sim_matrix[:,0:8], self.knn_sim_matrix[:,0:8].T)
+        self.knn_nbrs = NearestNeighbors(n_neighbors=self.len_live, algorithm='auto',metric='cosine').fit(
+            self.knn_sim_matrix[:, :])
+        distance, indices = self.knn_nbrs.kneighbors(self.knn_sim_matrix[:, :])
+        for i in range(self.len_live):
+            # print(i)
+            # vec = np.argsort(self.knn_sim_score_matrix[i, :])
+            # vec = vec[::-1]
+            self.vec = indices
+            # center_patient_id = self.train_data_cohort_mem[i]
+            center_patient_id = i
+            center_patient_id_name = self.live_data[i]
+            index = 0
+            for j in range(self.len_live):
+                if index == self.positive_sample_size:
+                    break
+                # compare_patient_id = self.train_data_cohort_mem[self.vec[i, j]]
+                compare_patient_id = self.vec[i, j]
+                if compare_patient_id == center_patient_id:
+                    continue
+                if center_patient_id_name not in self.knn_neighbor_control_feature.keys():
+                    self.knn_neighbor_control_feature[center_patient_id_name] = {}
+                    self.knn_neighbor_control_feature[center_patient_id_name].setdefault('knn_neighbor', []).append(compare_patient_id)
+                else:
+                    self.knn_neighbor_control_feature[center_patient_id_name].setdefault('knn_neighbor', []).append(compare_patient_id)
+
+                index = index + 1
 
     def construct_knn_attribute_cohort(self,hr_onset):
         """
@@ -88,7 +182,7 @@ class seq_cl():
         # self.norm_knn = np.expand_dims(np.linalg.norm(self.knn_sim_matrix, axis=1), 1)
         # self.knn_sim_matrix = self.knn_sim_matrix / self.norm_knn
         # self.knn_sim_score_matrix = np.matmul(self.knn_sim_matrix[:,0:8], self.knn_sim_matrix[:,0:8].T)
-        self.knn_nbrs = NearestNeighbors(n_neighbors=self.len_death, algorithm='ball_tree').fit(
+        self.knn_nbrs = NearestNeighbors(n_neighbors=self.len_death, algorithm='auto', metric='euclidean').fit(
             self.knn_sim_matrix[:, :])
         distance, indices = self.knn_nbrs.kneighbors(self.knn_sim_matrix[:, :])
         for i in range(self.len_death):
@@ -135,7 +229,7 @@ class seq_cl():
         # self.norm_knn = np.expand_dims(np.linalg.norm(self.knn_sim_matrix, axis=1), 1)
         # self.knn_sim_matrix = self.knn_sim_matrix / self.norm_knn
         # self.knn_sim_score_matrix = np.matmul(self.knn_sim_matrix[:,0:8], self.knn_sim_matrix[:,0:8].T)
-        self.knn_nbrs = NearestNeighbors(n_neighbors=self.len_live, algorithm='ball_tree').fit(
+        self.knn_nbrs = NearestNeighbors(n_neighbors=self.len_live, algorithm='auto', metric='euclidean').fit(
             self.knn_sim_matrix[:, :])
         distance, indices = self.knn_nbrs.kneighbors(self.knn_sim_matrix[:, :])
         for i in range(self.len_live):
@@ -161,6 +255,7 @@ class seq_cl():
                     self.knn_neighbor_control[center_patient_id_name].setdefault('knn_neighbor', []).append(compare_patient_id)
 
                 index = index + 1
+
 
     def LSTM_layers(self):
         self.lstm = tf.keras.layers.LSTM(self.latent_dim,return_sequences=True,return_state=True)
@@ -387,6 +482,29 @@ class seq_cl():
             self.one_batch_data_neg[i * self.negative_sample_size:(i + 1) * self.negative_sample_size, :, :] = \
                 self.patient_neg_sample_tensor
 
+    def aquire_batch_data_cl_feature(self, starting_index, data_set, length,hr_onset):
+        self.one_batch_data = np.zeros(
+            (length, self.time_sequence, self.vital_length + self.lab_length))
+        self.one_batch_data_pos = np.zeros((length * self.positive_sample_size, self.time_sequence,
+                                            self.vital_length + self.lab_length))
+        self.one_batch_data_neg = np.zeros((length * self.negative_sample_size, self.time_sequence,
+                                            self.vital_length + self.lab_length))
+
+        self.one_batch_logit_dp = np.zeros((length, 1))
+        for i in range(length):
+            name = data_set[starting_index + i]
+            self.read_d.return_tensor_data_dynamic(name,hr_onset)
+            one_data = self.read_d.one_data_tensor
+            self.one_batch_logit_dp[i, 0] = self.read_d.logit_label
+            label = self.read_d.logit_label
+            self.one_batch_data[i, :, :] = one_data
+            self.aquire_pos_data_feature(label,name)
+            self.aquire_neg_data_random(label)
+            self.one_batch_data_pos[i * self.positive_sample_size:(i + 1) * self.positive_sample_size, :, :] = \
+                self.patient_pos_sample_tensor
+            self.one_batch_data_neg[i * self.negative_sample_size:(i + 1) * self.negative_sample_size, :, :] = \
+                self.patient_neg_sample_tensor
+
     def aquire_pos_data_random(self,label):
         #print("im in pos")
         self.patient_pos_sample_tensor = \
@@ -408,13 +526,27 @@ class seq_cl():
             np.zeros((self.negative_sample_size, self.time_sequence,
                       self.vital_length + self.lab_length))
         if label == 1:
-            index_neighbor = \
-                np.floor(np.random.uniform(0, self.len_live, self.negative_sample_size)).astype(int)
-            self.patient_neg_sample_tensor = self.memory_bank_control[index_neighbor,:,:]
+            #index_neighbor = \
+                #np.floor(np.random.uniform(0, self.len_live, self.negative_sample_size)).astype(int)
+            #self.patient_neg_sample_tensor = self.memory_bank_control[index_neighbor,:,:]
+            self.patient_neg_sample_tensor = self.memory_bank_control[0:self.negative_sample_size, :, :]
         else:
-            index_neighbor = \
-                np.floor(np.random.uniform(0, self.len_death, self.negative_sample_size)).astype(int)
-            self.patient_neg_sample_tensor = self.memory_bank_cohort[index_neighbor,:,:]
+            #index_neighbor = \
+                #np.floor(np.random.uniform(0, self.len_death, self.negative_sample_size)).astype(int)
+            #self.patient_neg_sample_tensor = self.memory_bank_cohort[index_neighbor,:,:]
+            self.patient_neg_sample_tensor = self.memory_bank_cohort[0:self.negative_sample_size, :, :]
+
+    def aquire_pos_data_feature(self,label,name):
+        #print("im in pos")
+        self.patient_pos_sample_tensor = \
+            np.zeros((self.positive_sample_size, self.time_sequence,
+             self.vital_length + self.lab_length))
+        if label == 1:
+            index_neighbor = np.array(self.knn_neighbor_feature[name]['knn_neighbor'])
+            self.patient_pos_sample_tensor = self.memory_bank_cohort[index_neighbor,:,:]
+        else:
+            index_neighbor =  np.array(self.knn_neighbor_control_feature[name]['knn_neighbor'])
+            self.patient_pos_sample_tensor = self.memory_bank_control[index_neighbor, :, :]
 
     def aquire_pos_data_attribute(self,label,name):
         #print("im in pos")
@@ -427,19 +559,6 @@ class seq_cl():
         else:
             index_neighbor =  np.array(self.knn_neighbor_control[name]['knn_neighbor'])
             self.patient_pos_sample_tensor = self.memory_bank_control[index_neighbor, :, :]
-
-
-    def aquire_neg_data_attribute(self,label,name):
-        #print("im in neg")
-        self.patient_neg_sample_tensor = \
-            np.zeros((self.negative_sample_size, self.time_sequence,
-                      self.vital_length + self.lab_length + self.blood_length))
-        if label == 1:
-            index_neighbor = np.array(self.knn_neighbor[name]['neg_knn_neighbor'])
-            self.patient_neg_sample_tensor = self.memory_bank_control[index_neighbor,:,:]
-        else:
-            index_neighbor = np.array(self.knn_neighbor_control[name]['neg_knn_neighbor'])
-            self.patient_neg_sample_tensor = self.memory_bank_cohort[index_neighbor,:,:]
 
     def pre_train(self):
         self.iteration = np.int(np.floor(np.float(self.len_train) / self.batch_size))
