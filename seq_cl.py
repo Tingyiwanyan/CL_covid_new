@@ -74,7 +74,7 @@ class seq_cl():
                                         self.final_dim))
         self.knn_neighbor_feature = {}
 
-        self.one_data_death = np.zeros((self.len_death,self.final_dim))
+        self.one_data_death = np.zeros((self.len_death,self.vital_length + self.lab_length))
         for i in range(self.len_death):
             name = self.death_data[i]
             self.read_d.return_tensor_data_dynamic(name, hr_onset)
@@ -121,7 +121,7 @@ class seq_cl():
                                         self.final_dim))
         self.knn_neighbor_control_feature = {}
 
-        self.one_data_live = np.zeros((self.len_live,self.final_dim))
+        self.one_data_live = np.zeros((self.len_live,self.vital_length + self.lab_length))
         for i in range(self.len_live):
             name = self.live_data[i]
             self.read_d.return_tensor_data_dynamic(name, hr_onset)
