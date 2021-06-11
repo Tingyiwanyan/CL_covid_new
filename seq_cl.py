@@ -329,6 +329,10 @@ class seq_cl():
         self.construct_knn_attribute_cohort(self.read_d.time_sequence)
         self.construct_knn_attribute_control(self.read_d.time_sequence)
         self.LSTM_layers()
+        self.init_a = tf.keras.initializers.he_normal(seed=None)
+        self.init_b = tf.keras.initializers.he_normal(seed=None)
+        self.A = tf.Variable(self.init_a(shape=(1,)))
+        self.B = tf.Variable(self.init_b(shape=(1,)))
         """
         LSTM stack layers
         """
@@ -358,12 +362,15 @@ class seq_cl():
         #self.x_negative_contrast = self.calibrate_layer(x_negative_contrast)
         self.contrastive_learning()
 
-        self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
+        self.logit_sig_ = tf.compat.v1.layers.dense(inputs=self.x_origin,
                                                    units=1,
                                                    kernel_initializer=tf.keras.initializers.he_normal(seed=None),
                                                    kernel_regularizer=tf.keras.regularizers.l1(0.01),
                                                    activity_regularizer=tf.keras.regularizers.l2(0.01),
                                                    activation=tf.nn.sigmoid)
+        #self.A_broad = tf.broadcast_to(self.A,
+                                              #[self.batch_size, self.negative_sample_size, self.final_dim])
+        self.logit_sig = tf.math.sigmoid(tf.math.add(tf.math.multiply(self.A,self.logit_sig_),self.B))
         self.cross_entropy = bce(self.logit_sig, self.input_y_logit)
         self.train_step_ce = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.cross_entropy)
         self.train_step_cl = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.log_normalized_prob)
