@@ -13,7 +13,7 @@ import tensorflow as tf
 import numpy as np
 import bootstrapped.bootstrap as bs
 import bootstrapped.stats_functions as bs_stats
-import tennsorflow_lattice as tfl
+import tensorflow_lattice as tfl
 
 class seq_cl():
     """
