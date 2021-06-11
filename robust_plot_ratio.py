@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-size = [345,945,1945,2945,3405]
+size = [1,5,10,15]
 
 train_lr = [0.695,0.743,0.741,0.753,0.754]
 
