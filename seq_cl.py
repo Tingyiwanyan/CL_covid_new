@@ -23,7 +23,7 @@ class seq_cl():
         self.read_d = read_d
         all_data = list(self.read_d.dic_patient.keys())
         #self.train_data = all_data[0:3405]
-        self.train_data = all_data[0:1945]
+        self.train_data = all_data[0:345]
         self.validate_data = all_data[3405:3891]
         self.test_data = all_data[3891:]
         self.death_data = self.read_d.death_data
@@ -596,7 +596,7 @@ class seq_cl():
             for j in range(self.iteration):
                 #print(j)
                 self.aquire_batch_data_cl(j*self.batch_size, self.train_data, self.batch_size,self.read_d.time_sequence)
-                self.err_ = self.sess.run([self.focal_loss, self.train_step_combine_fl,self.logit_sig],
+                self.err_ = self.sess.run([self.focal_loss, self.train_step_cel,self.logit_sig],
                                           feed_dict={self.input_x: self.one_batch_data,
                                                      self.input_y_logit: self.one_batch_logit_dp,#})
                                                      self.input_x_pos:self.one_batch_data_pos,
