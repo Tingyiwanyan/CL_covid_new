@@ -18,6 +18,7 @@ import bootstrapped.bootstrap as bs
 import bootstrapped.stats_functions as bs_stats
 from sklearn import svm
 from xgboost import XGBClassifier
+from sklearn.calibration import CalibratedClassifierCV
 
 
 class tradition_b():
@@ -152,7 +153,8 @@ class tradition_b():
             #for j in range(self.iteration):
                 #print(j)
         self.aquire_batch_data(0,self.train_data,len(self.train_data),self.read_d.time_sequence)
-        self.lr.fit(self.one_batch_data,self.one_batch_logit)
+        self.calibrate_lr = CalibratedClassifierCV(self.lr, method='isotonic')
+        self.calibrate_lr.fit(self.one_batch_data,self.one_batch_logit)
                 #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
                 #print(roc_auc_score(self.one_batch_logit,self.lr.predict_proba(self.one_batch_data)[:,1]))
 
@@ -167,8 +169,8 @@ class tradition_b():
             test = resample(self.test_data,n_samples=sample_size)
             self.aquire_batch_data(0, test, len(test),self.read_d.time_sequence)
             #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
-            auc.append(roc_auc_score(self.one_batch_logit, self.lr.predict_proba(self.one_batch_data)[:,1]))
-            auprc.append(average_precision_score(self.one_batch_logit, self.lr.predict_proba(self.one_batch_data)[:, 1]))
+            auc.append(roc_auc_score(self.one_batch_logit, self.calibrate_lr.predict_proba(self.one_batch_data)[:,1]))
+            auprc.append(average_precision_score(self.one_batch_logit, self.calibrate_lr.predict_proba(self.one_batch_data)[:, 1]))
 
 
         print("auc")
@@ -181,9 +183,9 @@ class tradition_b():
         self.aquire_batch_data(0, self.test_data, self.len_test,self.read_d.time_sequence)
         #print(self.lr.score(self.one_batch_data,self.one_batch_logit))
         print("auc")
-        print(roc_auc_score(self.one_batch_logit, self.lr.predict_proba(self.one_batch_data)[:,1]))
+        print(roc_auc_score(self.one_batch_logit, self.calibrate_lr.predict_proba(self.one_batch_data)[:,1]))
         print("auprc")
-        print(average_precision_score(self.one_batch_logit, self.lr.predict_proba(self.one_batch_data)[:, 1]))
+        print(average_precision_score(self.one_batch_logit, self.calibrate_lr.predict_proba(self.one_batch_data)[:, 1]))
 
 
     def random_forest(self):
