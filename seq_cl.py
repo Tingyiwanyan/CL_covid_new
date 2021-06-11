@@ -370,7 +370,7 @@ class seq_cl():
                                                    activation=tf.nn.sigmoid)
         #self.A_broad = tf.broadcast_to(self.A,
                                               #[self.batch_size, self.negative_sample_size, self.final_dim])
-        self.logit_sig = tf.math.sigmoid(tf.math.add(tf.math.multiply(self.A,self.logit_sig_),self.B))
+        self.logit_sig = tf.math.sigmoid(tf.math.negative(tf.math.add(tf.math.multiply(self.A,self.logit_sig_),self.B)))
         self.cross_entropy = bce(self.logit_sig, self.input_y_logit)
         self.train_step_ce = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.cross_entropy)
         self.train_step_cl = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.log_normalized_prob)
