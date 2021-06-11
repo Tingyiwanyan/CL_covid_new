@@ -351,20 +351,21 @@ class seq_cl():
                                                                                 self.final_dim])
 
         bce = tf.keras.losses.BinaryCrossentropy()
-        x_origin = whole_seq_output[:,self.time_sequence-1,:]
-        self.x_origin = self.calibrate_layer(x_origin)
-        x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
-        self.x_skip_contrast = self.calibrate_layer(x_skip_contrast)
-        x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
-        self.x_negative_contrast = self.calibrate_layer(x_negative_contrast)
+        self.x_origin = whole_seq_output[:,self.time_sequence-1,:]
+        #self.x_origin = self.calibrate_layer(x_origin)
+        self.x_skip_contrast = self.whole_seq_out_pos_reshape[:,:,self.time_sequence-1,:]
+        #self.x_skip_contrast = self.calibrate_layer(x_skip_contrast)
+        self.x_negative_contrast = self.whole_seq_out_neg_reshape[:,:,self.time_sequence-1,:]
+        #self.x_negative_contrast = self.calibrate_layer(x_negative_contrast)
         self.contrastive_learning()
 
-        self.logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
+        logit_sig = tf.compat.v1.layers.dense(inputs=self.x_origin,
                                                    units=1,
                                                    kernel_initializer=tf.keras.initializers.he_normal(seed=None),
                                                    kernel_regularizer=tf.keras.regularizers.l1(0.01),
                                                    activity_regularizer=tf.keras.regularizers.l2(0.01),
                                                    activation=tf.nn.sigmoid)
+        self.logit_sig = self.calibrate_layer(logit_sig)
         self.cross_entropy = bce(self.logit_sig, self.input_y_logit)
         self.train_step_ce = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.cross_entropy)
         self.train_step_cl = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.log_normalized_prob)
