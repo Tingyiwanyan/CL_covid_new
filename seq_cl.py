@@ -583,8 +583,8 @@ class seq_cl():
         for i in range(self.epoch):
             for j in range(self.iteration):
                 #print(j)
-                self.aquire_batch_data_cl_attribute(j*self.batch_size, self.train_data, self.batch_size,self.read_d.time_sequence)
-                self.err_ = self.sess.run([self.focal_loss, self.train_step_combine_fl,self.logit_sig],
+                self.aquire_batch_data_cl(j*self.batch_size, self.train_data, self.batch_size,self.read_d.time_sequence)
+                self.err_ = self.sess.run([self.focal_loss, self.train_step_fl,self.logit_sig],
                                           feed_dict={self.input_x: self.one_batch_data,
                                                      self.input_y_logit: self.one_batch_logit_dp,#})
                                                      self.input_x_pos:self.one_batch_data_pos,
@@ -649,6 +649,14 @@ class seq_cl():
         print(bs.bootstrap(np.array(auc), stat_func=bs_stats.mean))
         print("auprc")
         print(bs.bootstrap(np.array(auprc), stat_func=bs_stats.mean))
+
+    def test_whole(self):
+        self.aquire_batch_data(0, self.test_data, self.len_test,self.read_d.time_sequence)
+        self.out_logit = self.sess.run(self.logit_sig, feed_dict={self.input_x: self.one_batch_data})
+        print("auc")
+        print(roc_auc_score(self.one_batch_logit, self.out_logit))
+        print("auprc")
+        print(average_precision_score(self.one_batch_logit, self.out_logit))
 
 
     def val(self):
