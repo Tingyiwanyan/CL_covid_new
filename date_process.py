@@ -8,6 +8,7 @@ from os import listdir
 from seq_cl import seq_cl
 from traditional_baseline import tradition_b
 from calibration import calibrate
+from sklearn.calibration import CalibratedClassifierCV
 
 
 class read_data_covid():
