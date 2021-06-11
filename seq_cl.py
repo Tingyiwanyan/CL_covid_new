@@ -14,6 +14,7 @@ import numpy as np
 import bootstrapped.bootstrap as bs
 import bootstrapped.stats_functions as bs_stats
 from sklearn.calibration import CalibratedClassifierCV
+import random
 
 class seq_cl():
     """
@@ -28,11 +29,13 @@ class seq_cl():
         self.live_data = self.read_d.live_data
         self.train_death = [i for i in self.train_data if i in self.death_data]
         self.train_death = self.train_death[0:30]
-        self.train_data = [i for i in self.train_data if i in self.train_death]
+        self.train_live = [i for i in self.train_data if i in self.live_data]
+        self.train_death = self.train_death[0:30]
+        self.train_data = self.train_live + self.train_death
+        random.shuffle(self.train_data)
+
         self.validate_data = all_data[3405:3891]
         self.test_data = all_data[3891:]
-        self.death_data = self.read_d.death_data
-        self.live_data = self.read_d.live_data
         self.len_train = len(self.train_data)
         self.len_validate = len(self.validate_data)
         self.len_test = len(self.test_data)

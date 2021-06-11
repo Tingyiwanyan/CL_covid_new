@@ -19,6 +19,7 @@ import bootstrapped.stats_functions as bs_stats
 from sklearn import svm
 from xgboost import XGBClassifier
 from sklearn.calibration import CalibratedClassifierCV
+import random
 
 
 class tradition_b():
@@ -31,9 +32,12 @@ class tradition_b():
         all_data = list(self.read_d.dic_patient.keys())
         self.train_data = all_data[0:3405]
         self.death_data = self.read_d.death_data
+        self.live_data = self.read_d.live_data
         self.train_death = [i for i in self.train_data if i in self.death_data]
+        self.train_live = [i for i in self.train_data if i in self.live_data]
         self.train_death = self.train_death[0:30]
-        self.train_data = [i for i in self.train_data if i in self.train_death]
+        self.train_data = self.train_live + self.train_death
+        random.shuffle(self.train_data)
         #self.train_data = all_data[0:945]
         self.validate_data = all_data[3405:3891]
         self.test_data = all_data[3891:]
