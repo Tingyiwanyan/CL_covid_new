@@ -74,12 +74,11 @@ class seq_cl():
                                         self.final_dim))
         self.knn_neighbor_feature = {}
 
-        self.one_data_death = np.zeros((self.len_death,self.vital_length + self.lab_length))
+        self.one_data_death = np.zeros((self.len_death,self.time_sequence,self.vital_length + self.lab_length))
         for i in range(self.len_death):
             name = self.death_data[i]
             self.read_d.return_tensor_data_dynamic(name, hr_onset)
-            one_data = self.read_d.one_data_tensor
-            self.one_data_death[i,:] = one_data[0,:]
+            self.one_data_death[i,:,:] = self.read_d.one_data_tensor
             #one_data = np.mean(one_data, 0)
 
         self.knn_sim_matrix = self.sess.run(self.x_origin,
@@ -121,12 +120,11 @@ class seq_cl():
                                         self.final_dim))
         self.knn_neighbor_control_feature = {}
 
-        self.one_data_live = np.zeros((self.len_live,self.vital_length + self.lab_length))
+        self.one_data_live = np.zeros((self.len_live,self.time_sequence,self.vital_length + self.lab_length))
         for i in range(self.len_live):
             name = self.live_data[i]
             self.read_d.return_tensor_data_dynamic(name, hr_onset)
-            one_data = self.read_d.one_data_tensor
-            self.one_data_live[i,:] = one_data[0,:]
+            self.one_data_live[i,:,:] = self.read_d.one_data_tensor
             #one_data = np.mean(one_data, 0)
 
         self.knn_sim_matrix = self.sess.run(self.x_origin,
