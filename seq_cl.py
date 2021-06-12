@@ -652,7 +652,8 @@ class seq_cl():
                                                      self.input_y_logit: self.one_batch_logit_dp,  # })
                                                      self.input_x_pos: self.one_batch_data_pos,
                                                      self.input_x_neg: self.one_batch_data_neg})
-
+            print("epoch")
+            print(i+1)
             auc = self.val()
             self.acc.append(auc)
             #print("epoch")
