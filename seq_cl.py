@@ -397,7 +397,7 @@ class seq_cl():
         self.focal_loss = tf.reduce_mean(self.focal_loss_)
         self.train_step_fl = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(self.focal_loss)
         self.train_step_combine_fl = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(
-            self.focal_loss + 0.8 * self.log_normalized_prob)
+            self.focal_loss + 0.2 * self.log_normalized_prob)
         self.sess = tf.InteractiveSession()
         tf.global_variables_initializer().run()
         tf.local_variables_initializer().run()
@@ -609,11 +609,11 @@ class seq_cl():
                                                      self.input_y_logit: self.one_batch_logit_dp,#})
                                                      self.input_x_pos:self.one_batch_data_pos,
                                                      self.input_x_neg:self.one_batch_data_neg})
-            #print("epoch")
-            #print(i)
-                if j%5 == 0:
-                    auc = self.val()
-                    self.acc.append(auc)
+            print("epoch")
+            print(i)
+
+            auc = self.val()
+            self.acc.append(auc)
 
             #print(self.err_[0])
             #auc = roc_auc_score(self.one_batch_logit, self.err_[2])
@@ -637,9 +637,7 @@ class seq_cl():
                                                  self.input_y_logit: self.one_batch_logit_dp,  # })
                                                  self.input_x_pos: self.one_batch_data_pos,
                                                  self.input_x_neg: self.one_batch_data_neg})
-            if j % 5 == 0:
-                auc = self.val()
-                self.acc.append(auc)
+
         #print("epoch")
         #print(1)
         #self.val()
@@ -654,9 +652,9 @@ class seq_cl():
                                                      self.input_y_logit: self.one_batch_logit_dp,  # })
                                                      self.input_x_pos: self.one_batch_data_pos,
                                                      self.input_x_neg: self.one_batch_data_neg})
-                if j % 5 == 0:
-                    auc = self.val()
-                    self.acc.append(auc)
+
+            auc = self.val()
+            self.acc.append(auc)
             #print("epoch")
             #print(i+1)
             #self.val()
