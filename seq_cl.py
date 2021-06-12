@@ -56,7 +56,7 @@ class seq_cl():
         self.final_dim = self.layer2_dim
         self.boost_iteration = 10
         self.time_sequence = self.read_d.time_sequence
-        self.positive_sample_size = 15
+        self.positive_sample_size = 9
         self.negative_sample_size = 20
 
 
