@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 
 size = [32,64,128,256]
 
-FL_random = [0.802,0.806,0.815,0.817]
+FL_random = [0.802,0.806,0.815,0.816]
 
-FL_feature = [0.805,0.809,0.823,0.819]
+FL_feature = [0.805,0.809,0.823,0.824]
 
-FL_ATT = [0.817,0.827,0.834,0.838]
+FL_ATT = [0.817,0.827,0.834,0.835]
 
 plt.xlabel("Batch_size")
 plt.ylabel("AUC")

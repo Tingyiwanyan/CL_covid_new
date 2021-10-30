@@ -27,12 +27,6 @@ class seq_cl():
         #self.train_data = all_data[0:345]
         self.death_data = self.read_d.death_data
         self.live_data = self.read_d.live_data
-        #self.train_death = [i for i in self.train_data if i in self.death_data]
-        #self.train_death = self.train_death[0:30]
-        #self.train_live = [i for i in self.train_data if i in self.live_data]
-        #self.train_death = self.train_death[0:30]
-        #self.train_data = self.train_live + self.train_death
-        #random.shuffle(self.train_data)
 
         self.validate_data = all_data[3405:3891]
         self.test_data = all_data[3891:]
