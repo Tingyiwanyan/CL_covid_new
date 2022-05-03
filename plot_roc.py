@@ -2193,22 +2193,43 @@ tp_total_fl_feature,fp_total_fl_feature,precision_total_fl_feature,recall_total_
 tp_total_fl_random,fp_total_fl_random,precision_total_fl_random,recall_total_fl_random = retrn_fp_tp(True_logit,prob_fl_random,len(prob_fl_random))
 tp_total_ce,fp_total_ce,precision_total_ce,recall_total_ce = retrn_fp_tp(True_logit,prob_ce,len(prob_ce))
 
-"""
+fp_total_lr = fp_total_lr[0:len(fp_total_lr):6]
+tp_total_lr = tp_total_lr[0:len(tp_total_lr):6]
+
+fp_total_svm = fp_total_svm[0:len(fp_total_svm):6]
+tp_total_svm = tp_total_svm[0:len(tp_total_svm):6]
+
+fp_total_xgb = fp_total_xgb[0:len(fp_total_xgb):6]
+tp_total_xgb = tp_total_xgb[0:len(tp_total_xgb):6]
+
+fp_total_fl = fp_total_fl[0:len(fp_total_fl):3]
+tp_total_fl = tp_total_fl[0:len(tp_total_fl):3]
+
+fp_total_fl_random = fp_total_fl_random[0:len(fp_total_fl_random):3]
+tp_total_fl_random = tp_total_fl_random[0:len(tp_total_fl_random):3]
+
+fp_total_fl_feature = fp_total_fl_feature[0:len(fp_total_fl_feature):3]
+tp_total_fl_feature = tp_total_fl_feature[0:len(tp_total_fl_feature):3]
+
+fp_total_fl_att = fp_total_fl_att[0:len(fp_total_fl_att):3]
+tp_total_fl_att = tp_total_fl_att[0:len(tp_total_fl_att):3]
+
+
 plt.xlabel("False positive rate")
 plt.ylabel("True positive rate")
 plt.title("Mortality Prediction", fontsize=14)
 plt.xlim(0.0, 1.0)
 plt.ylim(0.0, 1.0)
 x = [0.0, 1.0]
-plt.plot(fp_total_lr, tp_total_lr, color='green', linewidth=2, linestyle='dashed',label='LR(AUC=0.732)')
-plt.plot(fp_total_rf,tp_total_rf,color='blue',linestyle='dashed',linewidth=2,label='RF(AUC=0.778)')
-plt.plot(fp_total_svm,tp_total_svm,color='violet',linestyle='dashed',linewidth=2,label='SVM(AUC=0.760)')
-plt.plot(fp_total_xgb,tp_total_xgb,color='red',linestyle='dashed',linewidth=2,label='XGB(AUC=0.758)')
+plt.plot(fp_total_lr, tp_total_lr, color='green', linewidth=1, linestyle='dashed',label='LR(AUC=0.732)')
+plt.plot(fp_total_rf,tp_total_rf,color='blue',linestyle='dashed',linewidth=1,label='RF(AUC=0.778)')
+plt.plot(fp_total_svm,tp_total_svm,color='violet',linestyle='dashed',linewidth=1,label='SVM(AUC=0.760)')
+plt.plot(fp_total_xgb,tp_total_xgb,color='red',linestyle='dashed',linewidth=1,label='XGB(AUC=0.758)')
 #plt.plot(fp_total_ce,tp_total_ce,color='indigo',linestyle='dashed',linewidth=2,label='CE(AUC=0.743)')
-plt.plot(fp_total_fl,tp_total_fl,color='orange',linestyle='dashed',linewidth=2,label='FL(AUC=0.777)')
-plt.plot(fp_total_fl_random,tp_total_fl_random,color='gray',linestyle='solid',linewidth=2,label='FL_RANDOM(AUC=0.815)')
-plt.plot(fp_total_fl_feature,tp_total_fl_feature,color='pink',linestyle='solid',linewidth=2,label='FL_FEATURE(AUC=0.824)')
-plt.plot(fp_total_fl_att,tp_total_fl_att,color='purple',linestyle='solid',linewidth=2,label='FL_ATT(AUC=0.832)')
+plt.plot(fp_total_fl,tp_total_fl,color='orange',linestyle='dashed',linewidth=1,label='FL(AUC=0.777)')
+plt.plot(fp_total_fl_random,tp_total_fl_random,color='gray',linestyle='solid',linewidth=1,label='FL_RANDOM(AUC=0.815)')
+plt.plot(fp_total_fl_feature,tp_total_fl_feature,color='pink',linestyle='solid',linewidth=1,label='FL_FEATURE(AUC=0.824)')
+plt.plot(fp_total_fl_att,tp_total_fl_att,color='purple',linestyle='solid',linewidth=1,label='FL_ATT(AUC=0.832)')
 
 plt.legend(loc='lower right')
 plt.show()
@@ -2258,3 +2279,4 @@ plt.legend(loc="lower right")
 plt.title('Calibration plot')
 
 plt.show()
+"""

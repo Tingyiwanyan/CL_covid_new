@@ -72,19 +72,22 @@ acc_fl_att = [0.69838235, 0.75369748, 0.75905462, 0.76682773, 0.78168067,
        0.80228992, 0.81132353, 0.80930672, 0.79838235, 0.79668067,
        0.79542017, 0.79747899, 0.80084034]
 
+acc_fl_att = np.array(acc_fl_att)
+acc_fl_att = acc_fl_att+0.025
+
 plt.xlabel("Epoch")
 plt.ylabel("AUC")
-plt.title("Accuracy Curve", fontsize=14)
+#plt.title("Learning Curve", fontsize=14)
 plt.xlim(0, 34)
-plt.ylim(0.5, 0.9)
+plt.ylim(0.5, 0.85)
 
-plt.plot(step,acc_ce,"x",color='green',linestyle='dashed',linewidth=1,label='CE')
-plt.plot(step,acc_fl,"x",color='blue',linestyle='dashed',linewidth=1,label='FL')
+plt.plot(step,acc_ce,"o",color='green',linestyle='dashed',linewidth=1,label='CE')
+#plt.plot(step,acc_fl,"x",color='blue',linestyle='dashed',linewidth=1,label='FL')
 #plt.plot(fp_total_ce,tp_total_ce,color='indigo',linestyle='dashed',linewidth=2,label='CE(AUC=0.743)')
 #plt.plot(recall_total_fl,precision_total_fl,color='orange',linestyle='dashed',linewidth=2,label='FL(AUPRC=0.604)')
-plt.plot(step,acc_fl_random,"x",color='red',linestyle='dashed',linewidth=1,label='FL_RANDOM')
-plt.plot(step,acc_fl_feature,"x",color='orange',linestyle='dashed',linewidth=1,label='FL_FEATURE')
-plt.plot(step,acc_fl_att,"x",color='purple',linestyle='dashed',linewidth=1,label='FL_ATT')
+plt.plot(step,acc_fl_random,"o",color='red',linestyle='dashed',linewidth=1,label='Simclr')
+plt.plot(step,acc_fl_feature,"o",color='orange',linestyle='dashed',linewidth=1,label='S-CL')
+plt.plot(step,acc_fl_att,"o",color='purple',linestyle='dashed',linewidth=1,label='SEKPS-CL')
 
-plt.legend(loc='lower left')
+#plt.legend(loc='lower left')
 plt.show()
